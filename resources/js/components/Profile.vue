@@ -5,11 +5,11 @@
                 <div class="card card-widget widget-user">
               <!-- Add the bg color to the header using any of the bg-* classes -->
               <div class="widget-user-header text-white" style="background: url('./img/profile-back.jpg') center center; background-size: cover;">
-                <h3 class="widget-user-username text-right">Elizabeth Pierce</h3>
-                <h5 class="widget-user-desc text-right">Web Designer</h5>
+                <h3 class="widget-user-username text-right">{{this.form.name}}</h3>
+                <h5 class="widget-user-desc text-right">{{this.form.type}}</h5>
               </div>
               <div class="widget-user-image">
-                <img class="img-circle" src="" alt="User Avatar">
+                <img class="img-circle" :src="getProfilePhoto()" alt="User Avatar">
               </div>
               <div class="card-footer">
                 <div class="row">
@@ -76,9 +76,9 @@
                         </div>
                       </div>
                       <div class="form-group row">
-                        <label for="inputExperience" class="col-sm-2 col-form-label">Experience</label>
+                        <label for="inputExperience" class="col-sm-2 col-form-label">Bio</label>
                         <div class="col-sm-10">
-                          <textarea class="form-control" id="inputExperience" placeholder="Experience"></textarea>
+                          <textarea v-model="form.bio" class="form-control" id="inputExperience" placeholder="Short Bio"></textarea>
                         </div>
                       </div>
                       <div class="form-group row">
@@ -120,8 +120,8 @@
                     'name': '',
                     'email': '',
                     'type': '',
-                    'bios': '',
-                    'photos': '',
+                    'bio': '',
+                    'photo': '',
                     'password': ''
                 })
             }
@@ -134,11 +134,15 @@
             .then(({data})=>{this.form.fill(data)});
         },
         methods:{
+            getProfilePhoto(){
+              let photo = (this.form.photo.length > 200) ? this.form.photo : "img/profile/"+this.form.photo;
+              return photo;
+            },
             updateInfo(){
                 this.$Progress.start();
                 this.form.put('api/profile/')
                 .then(()=>{
-
+                  
                     this.$Progress.finish();
                 })
                 .catch(()=>{

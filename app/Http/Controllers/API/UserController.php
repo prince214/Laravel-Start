@@ -25,7 +25,11 @@ class UserController extends Controller
      */
     public function index()
     {
-        return User::latest()->paginate(10);
+        // $this->authorize('isAdmin');
+        if (\Gate::allows('isAdmin') || \Gate::allows('isAuthor')) {
+            return User::latest()->paginate(10);
+        }
+        
     }
 
     /**
@@ -40,17 +44,16 @@ class UserController extends Controller
         $this->validate($request,[
             'name' => 'required',
             'email' => 'required|string|email|max:191|unique:users',
-            'date' => 'required',
             'password' => 'required|min:3',
         ]);
         // return $request['date'];
-       
 
          return User::create([
             'name' => $request['name'],
             'email' => $request['email'],
-            'datepicker' => $request['date'],
-            'password' => bcrypt($request['password'])
+            'type' => $request['type'],
+            'bio' => $request['bio'],
+            'password' => Hash::make($request['password']),
         ]);
 
           // $data=array('date'=>$request['date']);
@@ -73,30 +76,48 @@ class UserController extends Controller
         return auth('api')->user();
     }
 
+    public function search(){
+        if($search = \Request::get('q')){
+            $users = User::where(function($query) use ($search){
+                $query->where('name','LIKE','%$search%')
+                      ->orWhere('email','LIKE','%$serach%')
+                      ->orWhere('type','LIKE','%$serach%');
+            })->paginate(10);
+        }else{
+            $users = User::latest()->paginate(5);
+        }
+        return $users;
+    }
+
     public function updateProfile(Request $request)
     {
         $user = auth('api')->user();
 
+
         $this->validate($request,[
-            'name' => 'required',
+            'name' => 'required|string|max:191',
             'email' => 'required|string|email|max:191|unique:users,email,'.$user->id,
-            'password' => 'sometimes|min:3',
+            'password' => 'sometimes|required|min:6'
         ]);
 
+
         $currentPhoto = $user->photo;
+
+
         if($request->photo != $currentPhoto){
             $name = time().'.' . explode('/', explode(':', substr($request->photo, 0, strpos($request->photo, ';')))[1])[1];
 
             \Image::make($request->photo)->save(public_path('img/profile/').$name);
-            $request->merge(['photo' => $name]);
+            $request->merge(['photo' => $name]);            
 
-            // $userPhoto = public_path('img/profile/').$currentPhoto;
-            // if(file_exists($userPhoto)){
-            //     @unlink($userPhoto);
-            // }
+            $userPhoto = public_path('img/profile/').$currentPhoto;
+            if(file_exists($userPhoto)){
+                @unlink($userPhoto);
+            }
+
         }
 
-        if (!empty($request->password)) {
+        if(!empty($request->password)){
             $request->merge(['password' => Hash::make($request['password'])]);
         }
 
@@ -134,6 +155,8 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
+
+        $this->authorize('isAdmin');
         $user = User::findOrFail($id);
 
         //delete user

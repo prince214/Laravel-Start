@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <div class="row">
+        <div class="row mt-5" v-if="$gate.isAdminOrAuthor()">
           <div class="col-12">
             <div class="card">
               <div class="card-header">
@@ -18,18 +18,18 @@
                       <th>ID</th>
                       <th>Name</th>
                       <th>Email</th>
-                      <th>Date</th>
+                      <th>Type</th>
                       <th>Created at</th>
                       <th>Modify</th>
                     </tr>
                   </thead>
                   <tbody>
 
-                    <tr v-for="user in users" :key="user.id">
+                    <tr v-for="user in users.data" :key="user.id">
                       <td>{{user.id}}</td>
                       <td>{{user.name | upText}}</td>
                       <td>{{user.email}}</td>
-                      <td>23 dafa f</td>
+                      <td>{{user.type | upText}}</td>
                       <td><span class="tag tag-success">{{user.created_at | stdDate}}</span></td>
                       <td>
                           <a href="#" @click="editModal(user)">
@@ -45,11 +45,18 @@
                 </table>
               </div>
               <!-- /.card-body -->
+
+              <div class="card-footer">
+                <pagination :data="users" @pagination-change-page="getResults"></pagination>
+              </div>
             </div>
             <!-- /.card -->
           </div>
         </div>
 
+        <div v-if="!$gate.isAdminOrAuthor()">
+          <not-found></not-found>
+        </div>
 
         <!-- Modal -->
         <div class="modal fade" id="addNewCenter" tabindex="-1" role="dialog" aria-labelledby="addNewCenterTitle" aria-hidden="true">
@@ -82,11 +89,28 @@
                   <has-error :form="form" field="email"></has-error>
                 </div>
 
-                <div class="form-group">
+                <!-- <div class="form-group">
                   <input type="hidden" name="date">
                   <datepicker v-model="form.date" :class="{ 'is-invalid': form.errors.has('date') }" placeholder="Select date" :bootstrap-styling="true" >
                   </datepicker>
                   <has-error :form="form" field="date"></has-error>
+                </div> -->
+
+                <div class="form-group">
+                        <textarea v-model="form.bio" name="bio" id="bio"
+                        placeholder="Short bio for user (Optional)"
+                        class="form-control" :class="{ 'is-invalid': form.errors.has('bio') }"></textarea>
+                        <has-error :form="form" field="bio"></has-error>
+                    </div>
+
+                 <div class="form-group">
+                        <select name="type" v-model="form.type" id="type" class="form-control" :class="{ 'is-invalid': form.errors.has('type') }">
+                            <option value="">Select User Role</option>
+                            <option value="admin">Admin</option>
+                            <option value="user">Standard User</option>
+                            <option value="author">Author</option>
+                        </select>
+                        <has-error :form="form" field="type"></has-error>
                 </div>
 
                 <div class="form-group">
@@ -125,12 +149,20 @@ import Datepicker from 'vuejs-datepicker';
                     'id': '',
                     'name': '',
                     'email': '',
-                    'date': '',
-                    'password': ''
+                    'type': '',
+                    'bio': '',
+                    'password': '',
+                    'photo': ''
                 })
             }
         },
         methods:{
+          getResults(page = 1) {
+            axios.get('api/user?page=' + page)
+              .then(response => {
+                this.users = response.data;
+              });
+          },
           updateUser(){
             this.$Progress.start();
             this.form.put('api/user/'+this.form.id)
@@ -210,10 +242,22 @@ import Datepicker from 'vuejs-datepicker';
                 
             },
             loadUser(){
-                axios.get("api/user").then(({data})=>{this.users = data.data});
+              if(this.$gate.isAdminOrAuthor()){
+                axios.get("api/user").then(({data})=>{this.users = data});
+              }
             }
         },
         created() {
+          Fire.$on('searching',() => {
+              let query = this.$parent.search;
+                axios.get('api/findUser?q='+query)
+                .then((data) => {
+                  this.users = data.data
+                })
+                .catch(()=>{
+
+                })
+            });
             this.loadUser();
             Fire.$on('AfterCreate',() => {
                 this.loadUser();

@@ -1916,6 +1916,31 @@ module.exports = {
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Dashboard.vue?vue&type=script&lang=js&":
+/*!********************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Dashboard.vue?vue&type=script&lang=js& ***!
+  \********************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  mounted: function mounted() {
+    console.log('Component mounted.');
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Developer.vue?vue&type=script&lang=js&":
 /*!********************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Developer.vue?vue&type=script&lang=js& ***!
@@ -1961,6 +1986,33 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  mounted: function mounted() {
+    console.log('Component mounted.');
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/NotFound.vue?vue&type=script&lang=js&":
+/*!*******************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/NotFound.vue?vue&type=script&lang=js& ***!
+  \*******************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
 //
 //
 //
@@ -2109,8 +2161,8 @@ __webpack_require__.r(__webpack_exports__);
         'name': '',
         'email': '',
         'type': '',
-        'bios': '',
-        'photos': '',
+        'bio': '',
+        'photo': '',
         'password': ''
       })
     };
@@ -2128,6 +2180,10 @@ __webpack_require__.r(__webpack_exports__);
     });
   },
   methods: {
+    getProfilePhoto: function getProfilePhoto() {
+      var photo = this.form.photo.length > 200 ? this.form.photo : "img/profile/" + this.form.photo;
+      return photo;
+    },
     updateInfo: function updateInfo() {
       var _this2 = this;
 
@@ -2283,6 +2339,30 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'Users',
@@ -2297,14 +2377,24 @@ __webpack_require__.r(__webpack_exports__);
         'id': '',
         'name': '',
         'email': '',
-        'date': '',
-        'password': ''
+        'type': '',
+        'bio': '',
+        'password': '',
+        'photo': ''
       })
     };
   },
   methods: {
-    updateUser: function updateUser() {
+    getResults: function getResults() {
       var _this = this;
+
+      var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+      axios.get('api/user?page=' + page).then(function (response) {
+        _this.users = response.data;
+      });
+    },
+    updateUser: function updateUser() {
+      var _this2 = this;
 
       this.$Progress.start();
       this.form.put('api/user/' + this.form.id).then(function () {
@@ -2312,11 +2402,11 @@ __webpack_require__.r(__webpack_exports__);
         $('#addNewCenter').modal('hide');
         Swal.fire('Updated!', 'User has been updated.', 'success');
 
-        _this.$Progress.finish();
+        _this2.$Progress.finish();
 
         Fire.$emit('AfterCreate');
       })["catch"](function () {
-        _this.$Progress.fail();
+        _this2.$Progress.fail();
       });
     },
     editModal: function editModal(user) {
@@ -2331,7 +2421,7 @@ __webpack_require__.r(__webpack_exports__);
       $('#addNewCenter').modal('show');
     },
     deleteUser: function deleteUser(id) {
-      var _this2 = this;
+      var _this3 = this;
 
       Swal.fire({
         title: 'Are you sure?',
@@ -2344,7 +2434,7 @@ __webpack_require__.r(__webpack_exports__);
       }).then(function (result) {
         //Send Request to server to delete user
         if (result.value) {
-          _this2.form["delete"]('api/user/' + id).then(function () {
+          _this3.form["delete"]('api/user/' + id).then(function () {
             Swal.fire('Deleted!', 'User has been deleted.', 'success');
             Fire.$emit('AfterCreate');
           })["catch"](function () {
@@ -2354,7 +2444,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     createUser: function createUser() {
-      var _this3 = this;
+      var _this4 = this;
 
       this.$Progress.start();
       this.form.post('api/user').then(function () {
@@ -2365,26 +2455,34 @@ __webpack_require__.r(__webpack_exports__);
           title: 'User created successfully'
         });
 
-        _this3.$Progress.finish();
+        _this4.$Progress.finish();
       })["catch"](function () {
-        _this3.$Progress.fail();
+        _this4.$Progress.fail();
       });
     },
     loadUser: function loadUser() {
-      var _this4 = this;
+      var _this5 = this;
 
-      axios.get("api/user").then(function (_ref) {
-        var data = _ref.data;
-        _this4.users = data.data;
-      });
+      if (this.$gate.isAdminOrAuthor()) {
+        axios.get("api/user").then(function (_ref) {
+          var data = _ref.data;
+          _this5.users = data;
+        });
+      }
     }
   },
   created: function created() {
-    var _this5 = this;
+    var _this6 = this;
 
+    Fire.$on('searching', function () {
+      var query = _this6.$parent.search;
+      axios.get('api/findUser?q=' + query).then(function (data) {
+        _this6.users = data.data;
+      })["catch"](function () {});
+    });
     this.loadUser();
     Fire.$on('AfterCreate', function () {
-      _this5.loadUser();
+      _this6.loadUser();
     }); // setInterval(() => this.loadUser(), 3000);
   }
 });
@@ -18782,6 +18880,599 @@ if ( typeof noGlobal === "undefined" ) {
 return jQuery;
 } );
 
+
+/***/ }),
+
+/***/ "./node_modules/laravel-vue-pagination/dist/laravel-vue-pagination.common.js":
+/*!***********************************************************************************!*\
+  !*** ./node_modules/laravel-vue-pagination/dist/laravel-vue-pagination.common.js ***!
+  \***********************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports =
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = "fb15");
+/******/ })
+/************************************************************************/
+/******/ ({
+
+/***/ "f6fd":
+/***/ (function(module, exports) {
+
+// document.currentScript polyfill by Adam Miller
+
+// MIT license
+
+(function(document){
+  var currentScript = "currentScript",
+      scripts = document.getElementsByTagName('script'); // Live NodeList collection
+
+  // If browser needs currentScript polyfill, add get currentScript() to the document object
+  if (!(currentScript in document)) {
+    Object.defineProperty(document, currentScript, {
+      get: function(){
+
+        // IE 6-10 supports script readyState
+        // IE 10+ support stack trace
+        try { throw new Error(); }
+        catch (err) {
+
+          // Find the second match for the "at" string to get file src url from stack.
+          // Specifically works with the format of stack traces in IE.
+          var i, res = ((/.*at [^\(]*\((.*):.+:.+\)$/ig).exec(err.stack) || [false])[1];
+
+          // For all scripts on the page, if src matches or if ready state is interactive, return the script tag
+          for(i in scripts){
+            if(scripts[i].src == res || scripts[i].readyState == "interactive"){
+              return scripts[i];
+            }
+          }
+
+          // If no match, return null
+          return null;
+        }
+      }
+    });
+  }
+})(document);
+
+
+/***/ }),
+
+/***/ "fb15":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+
+// CONCATENATED MODULE: ./node_modules/@vue/cli-service/lib/commands/build/setPublicPath.js
+// This file is imported into lib/wc client bundles.
+
+if (typeof window !== 'undefined') {
+  if (true) {
+    __webpack_require__("f6fd")
+  }
+
+  var i
+  if ((i = window.document.currentScript) && (i = i.src.match(/(.+\/)[^/]+\.js(\?.*)?$/))) {
+    __webpack_require__.p = i[1] // eslint-disable-line
+  }
+}
+
+// Indicate to webpack that this file can be concatenated
+/* harmony default export */ var setPublicPath = (null);
+
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"604a59b1-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/LaravelVuePagination.vue?vue&type=template&id=7f71b5a7&
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('renderless-laravel-vue-pagination',{attrs:{"data":_vm.data,"limit":_vm.limit,"show-disabled":_vm.showDisabled,"size":_vm.size,"align":_vm.align},on:{"pagination-change-page":_vm.onPaginationChangePage},scopedSlots:_vm._u([{key:"default",fn:function(ref){
+var data = ref.data;
+var limit = ref.limit;
+var showDisabled = ref.showDisabled;
+var size = ref.size;
+var align = ref.align;
+var computed = ref.computed;
+var prevButtonEvents = ref.prevButtonEvents;
+var nextButtonEvents = ref.nextButtonEvents;
+var pageButtonEvents = ref.pageButtonEvents;
+return (computed.total > computed.perPage)?_c('ul',{staticClass:"pagination",class:{
+            'pagination-sm': size == 'small',
+            'pagination-lg': size == 'large',
+            'justify-content-center': align == 'center',
+            'justify-content-end': align == 'right'
+        }},[(computed.prevPageUrl || showDisabled)?_c('li',{staticClass:"page-item pagination-prev-nav",class:{'disabled': !computed.prevPageUrl}},[_c('a',_vm._g({staticClass:"page-link",attrs:{"href":"#","aria-label":"Previous","tabindex":!computed.prevPageUrl && -1}},prevButtonEvents),[_vm._t("prev-nav",[_c('span',{attrs:{"aria-hidden":"true"}},[_vm._v("«")]),_c('span',{staticClass:"sr-only"},[_vm._v("Previous")])])],2)]):_vm._e(),_vm._l((computed.pageRange),function(page,key){return _c('li',{key:key,staticClass:"page-item pagination-page-nav",class:{ 'active': page == computed.currentPage }},[_c('a',_vm._g({staticClass:"page-link",attrs:{"href":"#"}},pageButtonEvents(page)),[_vm._v("\n                "+_vm._s(page)+"\n                "),(page == computed.currentPage)?_c('span',{staticClass:"sr-only"},[_vm._v("(current)")]):_vm._e()])])}),(computed.nextPageUrl || showDisabled)?_c('li',{staticClass:"page-item pagination-next-nav",class:{'disabled': !computed.nextPageUrl}},[_c('a',_vm._g({staticClass:"page-link",attrs:{"href":"#","aria-label":"Next","tabindex":!computed.nextPageUrl && -1}},nextButtonEvents),[_vm._t("next-nav",[_c('span',{attrs:{"aria-hidden":"true"}},[_vm._v("»")]),_c('span',{staticClass:"sr-only"},[_vm._v("Next")])])],2)]):_vm._e()],2):_vm._e()}}],null,true)})}
+var staticRenderFns = []
+
+
+// CONCATENATED MODULE: ./src/LaravelVuePagination.vue?vue&type=template&id=7f71b5a7&
+
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js??ref--12-0!./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/RenderlessLaravelVuePagination.vue?vue&type=script&lang=js&
+/* harmony default export */ var RenderlessLaravelVuePaginationvue_type_script_lang_js_ = ({
+  props: {
+    data: {
+      type: Object,
+      default: function _default() {}
+    },
+    limit: {
+      type: Number,
+      default: 0
+    },
+    showDisabled: {
+      type: Boolean,
+      default: false
+    },
+    size: {
+      type: String,
+      default: 'default',
+      validator: function validator(value) {
+        return ['small', 'default', 'large'].indexOf(value) !== -1;
+      }
+    },
+    align: {
+      type: String,
+      default: 'left',
+      validator: function validator(value) {
+        return ['left', 'center', 'right'].indexOf(value) !== -1;
+      }
+    }
+  },
+  computed: {
+    isApiResource: function isApiResource() {
+      return !!this.data.meta;
+    },
+    currentPage: function currentPage() {
+      return this.isApiResource ? this.data.meta.current_page : this.data.current_page;
+    },
+    firstPageUrl: function firstPageUrl() {
+      return this.isApiResource ? this.data.links.first : null;
+    },
+    from: function from() {
+      return this.isApiResource ? this.data.meta.from : this.data.from;
+    },
+    lastPage: function lastPage() {
+      return this.isApiResource ? this.data.meta.last_page : this.data.last_page;
+    },
+    lastPageUrl: function lastPageUrl() {
+      return this.isApiResource ? this.data.links.last : null;
+    },
+    nextPageUrl: function nextPageUrl() {
+      return this.isApiResource ? this.data.links.next : this.data.next_page_url;
+    },
+    perPage: function perPage() {
+      return this.isApiResource ? this.data.meta.per_page : this.data.per_page;
+    },
+    prevPageUrl: function prevPageUrl() {
+      return this.isApiResource ? this.data.links.prev : this.data.prev_page_url;
+    },
+    to: function to() {
+      return this.isApiResource ? this.data.meta.to : this.data.to;
+    },
+    total: function total() {
+      return this.isApiResource ? this.data.meta.total : this.data.total;
+    },
+    pageRange: function pageRange() {
+      if (this.limit === -1) {
+        return 0;
+      }
+
+      if (this.limit === 0) {
+        return this.lastPage;
+      }
+
+      var current = this.currentPage;
+      var last = this.lastPage;
+      var delta = this.limit;
+      var left = current - delta;
+      var right = current + delta + 1;
+      var range = [];
+      var pages = [];
+      var l;
+
+      for (var i = 1; i <= last; i++) {
+        if (i === 1 || i === last || i >= left && i < right) {
+          range.push(i);
+        }
+      }
+
+      range.forEach(function (i) {
+        if (l) {
+          if (i - l === 2) {
+            pages.push(l + 1);
+          } else if (i - l !== 1) {
+            pages.push('...');
+          }
+        }
+
+        pages.push(i);
+        l = i;
+      });
+      return pages;
+    }
+  },
+  methods: {
+    previousPage: function previousPage() {
+      this.selectPage(this.currentPage - 1);
+    },
+    nextPage: function nextPage() {
+      this.selectPage(this.currentPage + 1);
+    },
+    selectPage: function selectPage(page) {
+      if (page === '...') {
+        return;
+      }
+
+      this.$emit('pagination-change-page', page);
+    }
+  },
+  render: function render() {
+    var _this = this;
+
+    return this.$scopedSlots.default({
+      data: this.data,
+      limit: this.limit,
+      showDisabled: this.showDisabled,
+      size: this.size,
+      align: this.align,
+      computed: {
+        isApiResource: this.isApiResource,
+        currentPage: this.currentPage,
+        firstPageUrl: this.firstPageUrl,
+        from: this.from,
+        lastPage: this.lastPage,
+        lastPageUrl: this.lastPageUrl,
+        nextPageUrl: this.nextPageUrl,
+        perPage: this.perPage,
+        prevPageUrl: this.prevPageUrl,
+        to: this.to,
+        total: this.total,
+        pageRange: this.pageRange
+      },
+      prevButtonEvents: {
+        click: function click(e) {
+          e.preventDefault();
+
+          _this.previousPage();
+        }
+      },
+      nextButtonEvents: {
+        click: function click(e) {
+          e.preventDefault();
+
+          _this.nextPage();
+        }
+      },
+      pageButtonEvents: function pageButtonEvents(page) {
+        return {
+          click: function click(e) {
+            e.preventDefault();
+
+            _this.selectPage(page);
+          }
+        };
+      }
+    });
+  }
+});
+// CONCATENATED MODULE: ./src/RenderlessLaravelVuePagination.vue?vue&type=script&lang=js&
+ /* harmony default export */ var src_RenderlessLaravelVuePaginationvue_type_script_lang_js_ = (RenderlessLaravelVuePaginationvue_type_script_lang_js_); 
+// CONCATENATED MODULE: ./node_modules/vue-loader/lib/runtime/componentNormalizer.js
+/* globals __VUE_SSR_CONTEXT__ */
+
+// IMPORTANT: Do NOT use ES2015 features in this file (except for modules).
+// This module is a runtime utility for cleaner component module output and will
+// be included in the final webpack user bundle.
+
+function normalizeComponent (
+  scriptExports,
+  render,
+  staticRenderFns,
+  functionalTemplate,
+  injectStyles,
+  scopeId,
+  moduleIdentifier, /* server only */
+  shadowMode /* vue-cli only */
+) {
+  // Vue.extend constructor export interop
+  var options = typeof scriptExports === 'function'
+    ? scriptExports.options
+    : scriptExports
+
+  // render functions
+  if (render) {
+    options.render = render
+    options.staticRenderFns = staticRenderFns
+    options._compiled = true
+  }
+
+  // functional template
+  if (functionalTemplate) {
+    options.functional = true
+  }
+
+  // scopedId
+  if (scopeId) {
+    options._scopeId = 'data-v-' + scopeId
+  }
+
+  var hook
+  if (moduleIdentifier) { // server build
+    hook = function (context) {
+      // 2.3 injection
+      context =
+        context || // cached call
+        (this.$vnode && this.$vnode.ssrContext) || // stateful
+        (this.parent && this.parent.$vnode && this.parent.$vnode.ssrContext) // functional
+      // 2.2 with runInNewContext: true
+      if (!context && typeof __VUE_SSR_CONTEXT__ !== 'undefined') {
+        context = __VUE_SSR_CONTEXT__
+      }
+      // inject component styles
+      if (injectStyles) {
+        injectStyles.call(this, context)
+      }
+      // register component module identifier for async chunk inferrence
+      if (context && context._registeredComponents) {
+        context._registeredComponents.add(moduleIdentifier)
+      }
+    }
+    // used by ssr in case component is cached and beforeCreate
+    // never gets called
+    options._ssrRegister = hook
+  } else if (injectStyles) {
+    hook = shadowMode
+      ? function () { injectStyles.call(this, this.$root.$options.shadowRoot) }
+      : injectStyles
+  }
+
+  if (hook) {
+    if (options.functional) {
+      // for template-only hot-reload because in that case the render fn doesn't
+      // go through the normalizer
+      options._injectStyles = hook
+      // register for functioal component in vue file
+      var originalRender = options.render
+      options.render = function renderWithStyleInjection (h, context) {
+        hook.call(context)
+        return originalRender(h, context)
+      }
+    } else {
+      // inject component registration as beforeCreate hook
+      var existing = options.beforeCreate
+      options.beforeCreate = existing
+        ? [].concat(existing, hook)
+        : [hook]
+    }
+  }
+
+  return {
+    exports: scriptExports,
+    options: options
+  }
+}
+
+// CONCATENATED MODULE: ./src/RenderlessLaravelVuePagination.vue
+var RenderlessLaravelVuePagination_render, RenderlessLaravelVuePagination_staticRenderFns
+
+
+
+
+/* normalize component */
+
+var component = normalizeComponent(
+  src_RenderlessLaravelVuePaginationvue_type_script_lang_js_,
+  RenderlessLaravelVuePagination_render,
+  RenderlessLaravelVuePagination_staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* harmony default export */ var RenderlessLaravelVuePagination = (component.exports);
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js??ref--12-0!./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/LaravelVuePagination.vue?vue&type=script&lang=js&
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ var LaravelVuePaginationvue_type_script_lang_js_ = ({
+  props: {
+    data: {
+      type: Object,
+      default: function _default() {}
+    },
+    limit: {
+      type: Number,
+      default: 0
+    },
+    showDisabled: {
+      type: Boolean,
+      default: false
+    },
+    size: {
+      type: String,
+      default: 'default',
+      validator: function validator(value) {
+        return ['small', 'default', 'large'].indexOf(value) !== -1;
+      }
+    },
+    align: {
+      type: String,
+      default: 'left',
+      validator: function validator(value) {
+        return ['left', 'center', 'right'].indexOf(value) !== -1;
+      }
+    }
+  },
+  methods: {
+    onPaginationChangePage: function onPaginationChangePage(page) {
+      this.$emit('pagination-change-page', page);
+    }
+  },
+  components: {
+    RenderlessLaravelVuePagination: RenderlessLaravelVuePagination
+  }
+});
+// CONCATENATED MODULE: ./src/LaravelVuePagination.vue?vue&type=script&lang=js&
+ /* harmony default export */ var src_LaravelVuePaginationvue_type_script_lang_js_ = (LaravelVuePaginationvue_type_script_lang_js_); 
+// CONCATENATED MODULE: ./src/LaravelVuePagination.vue
+
+
+
+
+
+/* normalize component */
+
+var LaravelVuePagination_component = normalizeComponent(
+  src_LaravelVuePaginationvue_type_script_lang_js_,
+  render,
+  staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* harmony default export */ var LaravelVuePagination = (LaravelVuePagination_component.exports);
+// CONCATENATED MODULE: ./node_modules/@vue/cli-service/lib/commands/build/entry-lib.js
+
+
+/* harmony default export */ var entry_lib = __webpack_exports__["default"] = (LaravelVuePagination);
+
+
+
+/***/ })
+
+/******/ })["default"];
+//# sourceMappingURL=laravel-vue-pagination.common.js.map
 
 /***/ }),
 
@@ -64591,6 +65282,844 @@ AlertSuccess_component.options.__file = "AlertSuccess.vue"
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Dashboard.vue?vue&type=template&id=040e2ab9&":
+/*!************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Dashboard.vue?vue&type=template&id=040e2ab9& ***!
+  \************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "container" }, [
+    _c("div", { staticClass: "row justify-content-center mt-3" }, [
+      _c(
+        "svg",
+        {
+          attrs: {
+            id: "cb7db7bb-371f-430c-ab8e-9f8547f8cfe6",
+            "data-name": "Layer 1",
+            xmlns: "http://www.w3.org/2000/svg",
+            "xmlns:xlink": "http://www.w3.org/1999/xlink",
+            width: "800",
+            height: "400.1",
+            viewBox: "0 0 1130 868.1"
+          }
+        },
+        [
+          _c(
+            "defs",
+            [
+              _c(
+                "linearGradient",
+                {
+                  attrs: {
+                    id: "be60935f-ac8f-4117-88a8-c3e19524f342",
+                    x1: "340.5",
+                    y1: "874.69",
+                    x2: "340.5",
+                    y2: "452.37",
+                    gradientUnits: "userSpaceOnUse"
+                  }
+                },
+                [
+                  _c("stop", {
+                    attrs: {
+                      offset: "0",
+                      "stop-color": "gray",
+                      "stop-opacity": "0.25"
+                    }
+                  }),
+                  _c("stop", {
+                    attrs: {
+                      offset: "0.54",
+                      "stop-color": "gray",
+                      "stop-opacity": "0.12"
+                    }
+                  }),
+                  _c("stop", {
+                    attrs: {
+                      offset: "1",
+                      "stop-color": "gray",
+                      "stop-opacity": "0.1"
+                    }
+                  })
+                ],
+                1
+              )
+            ],
+            1
+          ),
+          _c("title", [_vm._v("dashboard")]),
+          _c("path", {
+            attrs: {
+              d:
+                "M1143.14,213.61a231.21,231.21,0,0,0-44.83-60.38l-621.86-5.18,512-60.79A337.39,337.39,0,0,0,884.57,69.84C835.28,36.19,771.93,16,702.83,16c-62,0-119.33,16.29-166.07,43.93-39.72-17.3-85-27.11-133.11-27.11-138.17,0-253.3,80.9-279.13,188.19Z",
+              transform: "translate(-35 -15.95)",
+              fill: "#6c63ff",
+              opacity: "0.1"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M1165,303.59a197,197,0,0,0-19.38-84.92L67.86,314.31a209.54,209.54,0,0,0-25.25,53.91l333.75,42.06L35,440.94C45.27,562.4,168.43,658.3,318.88,658.3c75.73,0,144.54-24.3,195.53-63.93,51.15,40.38,120.62,65.21,197.17,65.21,113.57,0,211.6-54.67,257.25-133.71,91.58-24.58,162.72-86.28,187.07-163.47L733.83,307.06H1165C1165,305.9,1165,304.75,1165,303.59Z",
+              transform: "translate(-35 -15.95)",
+              fill: "#6c63ff",
+              opacity: "0.1"
+            }
+          }),
+          _c("ellipse", {
+            attrs: {
+              cx: "499.98",
+              cy: "855.15",
+              rx: "289.98",
+              ry: "12.94",
+              fill: "#6c63ff",
+              opacity: "0.1"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M707.09,848.34v7.82H475.84v-6.35a76,76,0,0,0,5.23-140.37H705.52a76,76,0,0,0,1.57,138.9Z",
+              transform: "translate(-35 -15.95)",
+              fill: "#c8cad7"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M705.52,709.44a76.11,76.11,0,0,0-42,50.39H523.08a76.13,76.13,0,0,0-42-50.39Z",
+              transform: "translate(-35 -15.95)",
+              opacity: "0.1"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M211,669.6v43.9c0,24.24,17.74,43.89,39.63,43.89H931.05c21.89,0,39.63-19.65,39.63-43.89V669.6Z",
+              transform: "translate(-35 -15.95)",
+              fill: "#c8cad7"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M707.09,848.34v7.82H475.84v-6.35a76,76,0,0,0,17.83-9.5H692.91A76.39,76.39,0,0,0,707.09,848.34Z",
+              transform: "translate(-35 -15.95)",
+              opacity: "0.1"
+            }
+          }),
+          _c("rect", {
+            attrs: {
+              x: "364.42",
+              y: "826.8",
+              width: "384.09",
+              height: "23.17",
+              rx: "9.5",
+              ry: "9.5",
+              fill: "#c8cad7"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M970.68,188.57A39.62,39.62,0,0,0,931.05,149H250.66A39.62,39.62,0,0,0,211,188.57V678.14H970.68Z",
+              transform: "translate(-35 -15.95)",
+              fill: "#474157"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M950,206.25V626.92a19.5,19.5,0,0,1-19.51,19.51H251.27a19.5,19.5,0,0,1-19.51-19.51V206.25a19.51,19.51,0,0,1,19.51-19.51H930.44A19.51,19.51,0,0,1,950,206.25Z",
+              transform: "translate(-35 -15.95)",
+              fill: "#4c4c78"
+            }
+          }),
+          _c("circle", {
+            attrs: { cx: "555.85", cy: "151.89", r: "9.15", fill: "#fff" }
+          }),
+          _c("circle", {
+            attrs: { cx: "555.85", cy: "699.38", r: "22.56", fill: "#fff" }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M383.53,196.5V646.43H251.27a19.5,19.5,0,0,1-19.51-19.51V206.25l.71-2.65,1.9-7.1Z",
+              transform: "translate(-35 -15.95)",
+              fill: "#fff"
+            }
+          }),
+          _c("polygon", {
+            attrs: {
+              points:
+                "365.5 187.65 365.5 228.15 196.76 228.15 196.76 190.3 197.47 187.65 365.5 187.65",
+              fill: "#4c4c78"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M950,206.25H231.76a19.5,19.5,0,0,1,19.51-19.5H930.44A19.5,19.5,0,0,1,950,206.25Z",
+              transform: "translate(-35 -15.95)",
+              fill: "#c8cad7"
+            }
+          }),
+          _c("circle", {
+            attrs: { cx: "216.27", cy: "180.55", r: "4.88", fill: "#ededf4" }
+          }),
+          _c("circle", {
+            attrs: { cx: "230.9", cy: "180.55", r: "4.88", fill: "#ededf4" }
+          }),
+          _c("circle", {
+            attrs: { cx: "245.53", cy: "180.55", r: "4.88", fill: "#ededf4" }
+          }),
+          _c("rect", {
+            attrs: {
+              x: "221.98",
+              y: "205.48",
+              width: "101.33",
+              height: "9.33",
+              fill: "#6c63ff"
+            }
+          }),
+          _c("rect", {
+            attrs: {
+              x: "221.98",
+              y: "250.98",
+              width: "101.33",
+              height: "9.33",
+              fill: "#6c63ff",
+              opacity: "0.5"
+            }
+          }),
+          _c("rect", {
+            attrs: {
+              x: "221.98",
+              y: "283.15",
+              width: "101.33",
+              height: "9.33",
+              fill: "#6c63ff",
+              opacity: "0.5"
+            }
+          }),
+          _c("rect", {
+            attrs: {
+              x: "221.98",
+              y: "315.32",
+              width: "101.33",
+              height: "9.33",
+              fill: "#6c63ff",
+              opacity: "0.5"
+            }
+          }),
+          _c("rect", {
+            attrs: {
+              x: "221.98",
+              y: "347.48",
+              width: "101.33",
+              height: "9.33",
+              fill: "#6c63ff",
+              opacity: "0.5"
+            }
+          }),
+          _c("rect", {
+            attrs: {
+              x: "221.98",
+              y: "379.65",
+              width: "101.33",
+              height: "9.33",
+              fill: "#6c63ff",
+              opacity: "0.5"
+            }
+          }),
+          _c("rect", {
+            attrs: {
+              x: "221.98",
+              y: "411.82",
+              width: "101.33",
+              height: "9.33",
+              fill: "#6c63ff",
+              opacity: "0.5"
+            }
+          }),
+          _c("rect", {
+            attrs: {
+              x: "221.98",
+              y: "443.98",
+              width: "101.33",
+              height: "9.33",
+              fill: "#6c63ff",
+              opacity: "0.5"
+            }
+          }),
+          _c("rect", {
+            attrs: {
+              x: "431.49",
+              y: "239.79",
+              width: "449.01",
+              height: "1.5",
+              fill: "#dce0ed",
+              opacity: "0.5"
+            }
+          }),
+          _c("rect", {
+            attrs: {
+              x: "431.49",
+              y: "274.62",
+              width: "449.01",
+              height: "1.5",
+              fill: "#dce0ed",
+              opacity: "0.5"
+            }
+          }),
+          _c("rect", {
+            attrs: {
+              x: "431.49",
+              y: "309.46",
+              width: "449.01",
+              height: "1.5",
+              fill: "#dce0ed",
+              opacity: "0.5"
+            }
+          }),
+          _c("rect", {
+            attrs: {
+              x: "431.49",
+              y: "344.29",
+              width: "449.01",
+              height: "1.5",
+              fill: "#dce0ed",
+              opacity: "0.5"
+            }
+          }),
+          _c("rect", {
+            attrs: {
+              x: "431.49",
+              y: "379.12",
+              width: "449.01",
+              height: "1.5",
+              fill: "#dce0ed",
+              opacity: "0.5"
+            }
+          }),
+          _c("polygon", {
+            attrs: {
+              points:
+                "880.51 380.61 430.94 380.61 430.94 312.11 472.17 332.43 514.84 338.21 552.28 326.92 597.45 291.89 620.17 278.77 636.78 275.57 652.67 276.42 678.81 289.33 714.33 311.96 742.21 315.55 764.32 307.93 811.17 269.55 835.09 261.02 860.12 264.89 880.51 276.66 880.51 380.61",
+              fill: "#6c63ff",
+              opacity: "0.5"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M544.3,354.18c-40.48,0-77.9-24.76-78.36-25.08l1.11-1.66c.58.39,58.16,38.49,107.09,19.4C592,339.89,604.68,329.06,617,318.6c12.83-10.93,24.95-21.26,41.46-25.74,19-5.13,39.65-.48,55.38,12.44,13.44,11.05,40.22,28.8,68.51,23.49,14.42-2.7,26.58-13.24,39.45-24.39C846.44,283,872,260.91,916.09,292.63l-1.17,1.62c-42.85-30.79-67.76-9.21-91.84,11.66-13.08,11.34-25.44,22-40.39,24.85-29.1,5.45-56.44-12.64-70.15-23.91-15.23-12.52-35.26-17-53.58-12.05-16.09,4.36-28,14.54-40.69,25.32-12.41,10.57-25.25,21.51-43.4,28.59A83.88,83.88,0,0,1,544.3,354.18Z",
+              transform: "translate(-35 -15.95)",
+              fill: "#6c63ff"
+            }
+          }),
+          _c("circle", {
+            attrs: { cx: "647.55", cy: "275.37", r: "11.13", fill: "#6c63ff" }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M403.62,533.19c-15.21-8.76-21-10.93-21-10.94l-.31-.22a12.66,12.66,0,0,1-3.84-4.85c0-.35,0-.7,0-1v.1c.25-4.64,3.54-8.85,6.67-12.53q4-4.71,8-9.41A9.19,9.19,0,0,0,395.2,491a7.49,7.49,0,0,0,.22-2c0-.28,0-.55,0-.82,0-2.34-.11-4.68-.19-7-.08-2.05-.6-4.62-2.65-5-1.06-.22-2.46.16-3-.75a1.68,1.68,0,0,1-.14-1.21s0,.06,0,.09a.52.52,0,0,1,0-.11,27.65,27.65,0,0,0,.76-4.81,6.9,6.9,0,0,0-.33-2.43c-1.19-3.39-5.26-4.78-8.86-5.42s-7.64-1.19-9.9-4a32.74,32.74,0,0,0-2-2.71,7.88,7.88,0,0,0-3.69-1.82,20.72,20.72,0,0,0-13.38,1.17c-1.74.78-3.49,1.82-5.4,1.71s-3.68-1.5-5.64-1.83c-3.16-.54-6.19,1.79-7.75,4.54a11,11,0,0,0-1.43,5.35c0,.1,0,.21,0,.31h0a7.86,7.86,0,0,0,2.06,5.46c1.36,1.42,3.39,2.39,4,4.25.23.76.18,1.58.38,2.34,0,.1.06.19.09.29l-.11.13a23.77,23.77,0,0,0-5,14.62,24.26,24.26,0,0,0,17,23c0,.23,0,.47,0,.72a10.34,10.34,0,0,1-3.3,8.05l-21.58,8.66s-13-1.54-17.68,17.45a32.16,32.16,0,0,0-.8,9.63c.17,2.87-.23,7.91-3.56,14.43-5.33,10.44-4.12,34.39,6.78,36.76,10.29,2.24,14.32,1.31,14.74,1.2l0,.42c-.17,4.5-1.8,43.26-7.73,48-1.65,1.29-1.34,2.17,0,2.76,0,0,0,.25,0,.7-.18,2.84-1.1,13.63-5.07,19.78C307.48,690,308,731,308,731l-3.14,24.19s1.93,14.94,0,17.55c-1.73,2.33-4,57.61-4.52,69.59h-.2a5.83,5.83,0,0,0-4.66,2.84C292.9,849.31,284,856.94,284,856.94c-1.93,2.75-9.09,5.38-12.87,6.62a8.25,8.25,0,0,0-1.46.63,7.68,7.68,0,0,0-3.25,3.42,3.66,3.66,0,0,0-.34,2.85c1,2.37,21.07,4,26.15,1.66,4-1.86,19.84-4.32,26.42-5.28a5.42,5.42,0,0,0,4.7-4.7,3.1,3.1,0,0,0-.6-2.35h0c-1.26-1.56-1.91-5.82-2.2-8.6a5.85,5.85,0,0,0,1.48-.88,63.09,63.09,0,0,1,3.63-25.38c4.84-12.8,6.3-36.52,5.09-51.94,0,0,14.77-63.57,26.4-69.5h0c.18.22,5.82,7.46,6.54,29.88.72,22.77,8.95,37.71,8.95,37.71s-3.63,38.66,0,53.13L367.87,847a7.39,7.39,0,0,1-.57-.52s.14.64.34,1.65l-.1.48.2.05c.54,2.85,1.34,7.82,1,10.74-.19,1.67-.65,3.94-1,6.18-.5,3.51-.64,6.92,1.21,7.66,3,1.22,20.83,2.89,23.86-1a5.61,5.61,0,0,0,.88-5.86,6,6,0,0,0-.88-1.49s-4.73-7.73-3.39-13.18a4,4,0,0,0-.57-3.12A161.08,161.08,0,0,1,393,823c3-11.41,9.42-36.43,4.72-52.89h0c-.18-.64-.38-1.28-.6-1.9a71,71,0,0,1-2.67-27.75,56.41,56.41,0,0,1,0-24.19C397.33,703,399.36,690,399.36,690s1.6-17.55.2-28.31l-.09-.69.76-.17s-4.11-18.26-5.57-29.88c-.34-2.75-.79-6.22-1.28-9.93a26.22,26.22,0,0,0,3.95-1c13.08-4.51,17.19-45.31,17.19-45.31V561.77S418.88,542,403.62,533.19Zm-97.43,315-.64-.34h0Z",
+              transform: "translate(-35 -15.95)",
+              fill: "url(#be60935f-ac8f-4117-88a8-c3e19524f342)"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M395.73,768.6c5.67,16.31-1,42.78-4,54.6a165.7,165.7,0,0,0-4,26,55,55,0,0,1-20.8-.48l5-24.34c-3.54-14.42,0-52.95,0-52.95s-8-14.9-8.74-37.59c-.7-22.33-6.2-29.55-6.38-29.78h0C345.38,710,331,773.33,331,773.33c1.18,15.36-.24,39-5,51.77a64.05,64.05,0,0,0-3.55,25.29c-1.65,1.39-3.95,1.63-6.43,1.23-6.75-1.09-14.84-6.91-14.84-6.91s2.6-69,4.49-71.62,0-17.49,0-17.49l3.07-24.11s-.47-40.89,4-48c3.88-6.13,4.77-16.89,4.95-19.71,0-.45,0-.7,0-.7l6.84-8.19s66.19-5,71.15,0c1.22,1.22,2,4,2.42,7.48,1.36,10.72-.2,28.21-.2,28.21s-2,13-4.82,26.23a57.4,57.4,0,0,0,0,24.11A72,72,0,0,0,395.73,768.6Z",
+              transform: "translate(-35 -15.95)",
+              fill: "#65617d"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M391.59,872.25c-2.95,3.9-20.32,2.25-23.28,1-1.81-.75-1.67-4.14-1.18-7.64.31-2.23.76-4.5.94-6.15.48-4.26-1.41-12.89-1.41-12.89s3.9,4.14,4.84,0a4.5,4.5,0,0,1,3.37-3.2,8.84,8.84,0,0,1,6.14.38c3.07,1.33,8.19,4.17,7.27,8-1.3,5.43,3.31,13.13,3.31,13.13a5.93,5.93,0,0,1,.86,1.49A5.67,5.67,0,0,1,391.59,872.25Z",
+              transform: "translate(-35 -15.95)",
+              fill: "#a27772"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M391.59,872.25c-2.95,3.9-20.32,2.25-23.28,1-1.81-.75-1.67-4.14-1.18-7.64,1.86.87,5,1.6,10.32,1.11a28.9,28.9,0,0,1,3.72-.12,85.06,85.06,0,0,0,11.28-.22A5.67,5.67,0,0,1,391.59,872.25Z",
+              transform: "translate(-35 -15.95)",
+              opacity: "0.1"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M331,773.33c1.18,15.36-.24,39-5,51.77a64.05,64.05,0,0,0-3.55,25.29c-1.65,1.39-3.95,1.63-6.43,1.23,1.43-10,7.5-52.93,11.4-86.86,4.43-38.65,25.17-65.24,25.17-65.24l4.14,4.55C345.38,710,331,773.33,331,773.33Z",
+              transform: "translate(-35 -15.95)",
+              opacity: "0.1"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M384.5,524.9l-2.89,14.18-14.13,23.76-17.43-7.45s-23.7-24.82-8.81-28.36a13.13,13.13,0,0,0,4.95-2.2c2.92-2.21,3.84-5.41,3.86-8.55a26.29,26.29,0,0,0-2.42-10.17l30.49-9.57a48.52,48.52,0,0,0-2.19,12.35c-.23,8.3,2.85,12.4,5.38,14.35A9.06,9.06,0,0,0,384.5,524.9Z",
+              transform: "translate(-35 -15.95)",
+              fill: "#fbbebe"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M378.12,496.54a48.52,48.52,0,0,0-2.19,12.35,24.1,24.1,0,0,1-25.88,7.39,26.29,26.29,0,0,0-2.42-10.17Z",
+              transform: "translate(-35 -15.95)",
+              opacity: "0.1"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M381.61,492.64a24.11,24.11,0,1,1-24.11-24.11A24.05,24.05,0,0,1,381.61,492.64Z",
+              transform: "translate(-35 -15.95)",
+              fill: "#fbbebe"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M384.5,524.9l-2.89,14.18-14.13,23.76-17.43-7.45s-23.7-24.82-8.81-28.36a13.13,13.13,0,0,0,4.95-2.2c-2.69,7.39,8.41,22.76,8.41,22.76,1.29,1.9,4.26.71,4.26.71,7.14-1.08,20.31-21.64,22.45-25.06A9.06,9.06,0,0,0,384.5,524.9Z",
+              transform: "translate(-35 -15.95)",
+              opacity: "0.1"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M398.15,662.39c-4.2,1-27.42,6.09-36.22,4.81-9.69-1.42-28.54-2.36-28.54-2.36s-12,.64-15.68-1c0-.45,0-.7,0-.7l6.84-8.19s66.19-5,71.15,0C397,656.13,397.7,658.9,398.15,662.39Z",
+              transform: "translate(-35 -15.95)",
+              opacity: "0.1"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M354.6,548.3s-12.47-17.27-7.77-24l-21.07,8.64s-12.68-1.54-17.25,17.38a33,33,0,0,0-.79,9.61c.17,2.85-.22,7.87-3.47,14.37-5.2,10.4-4,34.28,6.62,36.64s14.42,1.18,14.42,1.18-1.42,43.26-7.56,48.22,15.67,3.78,15.67,3.78,18.84,1,28.53,2.37,36.87-5,36.87-5-4-18.2-5.44-29.78-4.72-36.24-4.72-36.24l24.11-32.66s4.25-19.74-10.64-28.48-20.5-10.9-20.5-10.9-15,24.37-22.76,25.55C358.85,549,355.89,550.2,354.6,548.3Z",
+              transform: "translate(-35 -15.95)",
+              fill: "#ff748e"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M326.94,555.16s-.23,7.8,1.19,10.87,6.61,20.09,6.61,20.09H322.93s6.38-6.85,5.91-10.16S326.94,555.16,326.94,555.16Z",
+              transform: "translate(-35 -15.95)",
+              opacity: "0.1"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M361.93,614s-26.1-6.38-28.53-11.81-9.14-17.61-9.14-17.61l2.75-3.71,12.7,10s15.13,12,22.22,13.24S361.93,614,361.93,614Z",
+              transform: "translate(-35 -15.95)",
+              fill: "#fbbebe"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M361.93,614s-26.1-6.38-28.53-11.81-9.14-17.61-9.14-17.61l2.75-3.71,12.7,10s15.13,12,22.22,13.24S361.93,614,361.93,614Z",
+              transform: "translate(-35 -15.95)",
+              opacity: "0.05"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M384.5,583.29v14.16h-2.28a66.24,66.24,0,0,0-32.14,8.32l-4.26,2.36-1.15.64-7.33-16.5,6.86-6.15.35,0c1.68.16,8.93.76,12-.27s6.55-4.14,15.14-1.94c4.24,1.08,7.85,5.83,12,4.35Z",
+              transform: "translate(-35 -15.95)",
+              fill: "#fbbebe"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M407.31,557.52l4.73,5.32v12.88s-4,40.66-16.78,45.15-35.55-2.6-35.55-2.6-5.89-15.6-3.14-16.55,24.34-6.64,24.34-6.64-.31-23.85,4.42-30.94c0,0-3.07-22.22,7.56-22.69S407.31,557.52,407.31,557.52Z",
+              transform: "translate(-35 -15.95)",
+              opacity: "0.1"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M408,557.52l4.73,5.32v12.88s-4,40.66-16.79,45.15-35.54-2.6-35.54-2.6-5.89-15.6-3.14-16.55,24.33-6.64,24.33-6.64-.3-23.85,4.43-30.94c0,0-3.08-22.22,7.56-22.69S408,557.52,408,557.52Z",
+              transform: "translate(-35 -15.95)",
+              fill: "#ff748e"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M375,502.88a9.31,9.31,0,0,0-.54-4.6,3.53,3.53,0,0,0-3.74-2.16c-2,.47-2.9,3.1-4.88,3.73-1.67.53-3.5-.65-4.3-2.21a11.3,11.3,0,0,1-.82-5.14c0-2,0-3.95,0-5.93,0-2.15-.07-4.47-1.4-6.16-1.65-2.1-5.52-3-8.1-2.93a6.87,6.87,0,0,0-4.63,1.86,6,6,0,0,1-4.87,1.74,4.21,4.21,0,0,1-3.39-2.94.24.24,0,0,1,0-.08,24.11,24.11,0,1,1,35.86,32A66.79,66.79,0,0,0,375,502.88Z",
+              transform: "translate(-35 -15.95)",
+              opacity: "0.1"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M341.71,480.37a4.24,4.24,0,0,1-3.4-2.94c-.19-.76-.14-1.58-.37-2.33-.55-1.86-2.53-2.83-3.86-4.24-2.66-2.82-2.49-7.47-.61-10.87,1.53-2.74,4.48-5.05,7.57-4.52,1.91.34,3.56,1.7,5.5,1.82s3.57-.92,5.27-1.7a19.84,19.84,0,0,1,13.06-1.16,7.56,7.56,0,0,1,3.6,1.81,30.59,30.59,0,0,1,1.92,2.7c2.2,2.81,6.15,3.36,9.66,4s7.49,2,8.64,5.41c.77,2.24,0,4.67-.41,7a2,2,0,0,0,.09,1.45c.55.91,1.92.53,3,.74,2,.42,2.5,3,2.57,5q.14,3.48.19,7a9,9,0,0,1-.2,2.59,9.17,9.17,0,0,1-2,3.25l-7.81,9.38c-3.46,4.16-7.13,9-6.44,14.37-1.64.73-3.58-.68-4.12-2.4s-.11-3.56.26-5.32a65.36,65.36,0,0,0,1.23-9.23,9.34,9.34,0,0,0-.54-4.61,3.54,3.54,0,0,0-3.75-2.16c-2,.47-2.89,3.1-4.87,3.73-1.67.54-3.5-.65-4.3-2.21a11.43,11.43,0,0,1-.82-5.14v-5.93c0-2.15-.07-4.47-1.4-6.16-1.64-2.1-5.52-3-8.1-2.93a6.87,6.87,0,0,0-4.63,1.86A6,6,0,0,1,341.71,480.37Z",
+              transform: "translate(-35 -15.95)",
+              fill: "#7c5c5c"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d: "M347.15,554.57l7.41,30.4S360.39,584.94,347.15,554.57Z",
+              transform: "translate(-35 -15.95)",
+              opacity: "0.1"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M372.45,549.48s-9.7,15.88-5.91,32.29l1.8.13S365.12,574.3,372.45,549.48Z",
+              transform: "translate(-35 -15.95)",
+              opacity: "0.1"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M378.59,639.31s11.9-3.94,12.77,5.2C391.36,644.51,389.11,638.24,378.59,639.31Z",
+              transform: "translate(-35 -15.95)",
+              opacity: "0.1"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M344.2,586.83s-2.36,16.55,1.89,23.17a51.94,51.94,0,0,1-20.8,2.83l-1.42-26Z",
+              transform: "translate(-35 -15.95)",
+              opacity: "0.1"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M345.82,608.13l-1.15.64-7.33-16.5,6.86-6.15h.35v0C344.44,586.92,342.53,601.13,345.82,608.13Z",
+              transform: "translate(-35 -15.95)",
+              opacity: "0.1"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M344.2,586.12s-2.36,16.55,1.89,23.17a51.94,51.94,0,0,1-20.8,2.83l-8.27-26Z",
+              transform: "translate(-35 -15.95)",
+              fill: "#ff748e"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M323.75,862.19a5.34,5.34,0,0,1-4.59,4.68c-6.41,1-21.88,3.4-25.78,5.26-5,2.37-24.58.71-25.53-1.65a3.75,3.75,0,0,1,.34-2.85,7.79,7.79,0,0,1,4.59-4c3.7-1.24,10.68-3.85,12.56-6.59,0,0,8.7-7.62,11.18-11.73a5.66,5.66,0,0,1,4.55-2.83c2.07-.1,4.37.95,5.32,5.48,0,0,11.34,6.47,14.41.8,0,0,.47,8.71,2.35,11.1h0A3.13,3.13,0,0,1,323.75,862.19Z",
+              transform: "translate(-35 -15.95)",
+              fill: "#a27772"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M323.75,862.19a5.34,5.34,0,0,1-4.59,4.68c-6.41,1-21.88,3.4-25.78,5.26-5,2.37-24.58.71-25.53-1.65a3.75,3.75,0,0,1,.34-2.85,7.57,7.57,0,0,1,3.17-3.4c3.2,2.12,10.3,4.2,25.92,1.76,14.9-2.33,22.27-4.61,25.87-6.16h0A3.13,3.13,0,0,1,323.75,862.19Z",
+              transform: "translate(-35 -15.95)",
+              opacity: "0.1"
+            }
+          }),
+          _c("g", { attrs: { opacity: "0.1" } }, [
+            _c("path", {
+              attrs: {
+                d:
+                  "M388.25,475.67a.5.5,0,0,0,0-.12,21.55,21.55,0,0,0,.73-5.36,33.89,33.89,0,0,1-.73,4.3A2.62,2.62,0,0,0,388.25,475.67Z",
+                transform: "translate(-35 -15.95)"
+              }
+            }),
+            _c("path", {
+              attrs: {
+                d:
+                  "M374.46,497.79a7,7,0,0,1,.58,2.7,8.11,8.11,0,0,0-.58-3.76,3.55,3.55,0,0,0-3.75-2.17c-2,.47-2.89,3.11-4.87,3.74-1.67.53-3.5-.66-4.3-2.22a11.17,11.17,0,0,1-.82-5.14c0-2,0-3.95,0-5.92,0-2.15-.07-4.47-1.4-6.16-1.65-2.11-5.52-3-8.11-2.94a6.83,6.83,0,0,0-4.62,1.87,6,6,0,0,1-4.87,1.73,4.19,4.19,0,0,1-3.4-2.94c-.2-.76-.14-1.57-.37-2.33-.55-1.86-2.53-2.82-3.86-4.23a7.78,7.78,0,0,1-2-5,8.09,8.09,0,0,0,2,6.06c1.33,1.41,3.31,2.38,3.86,4.24.23.75.17,1.57.37,2.33a4.23,4.23,0,0,0,3.4,2.94,6,6,0,0,0,4.87-1.74A6.93,6.93,0,0,1,351.2,477c2.59-.08,6.46.84,8.11,2.94,1.33,1.69,1.39,4,1.4,6.16,0,2,0,3.95,0,5.92a11.19,11.19,0,0,0,.82,5.15c.8,1.56,2.63,2.74,4.3,2.21,2-.63,2.85-3.26,4.87-3.74A3.57,3.57,0,0,1,374.46,497.79Z",
+                transform: "translate(-35 -15.95)"
+              }
+            }),
+            _c("path", {
+              attrs: {
+                d:
+                  "M393.89,491.28a9.3,9.3,0,0,1-2,3.26q-3.92,4.68-7.81,9.37c-3.28,3.95-6.76,8.52-6.51,13.56.24-4.62,3.46-8.82,6.51-12.49l7.81-9.38a9.26,9.26,0,0,0,2-3.25,9,9,0,0,0,.2-2.6A6.48,6.48,0,0,1,393.89,491.28Z",
+                transform: "translate(-35 -15.95)"
+              }
+            }),
+            _c("path", {
+              attrs: {
+                d:
+                  "M373.51,515.89a5.58,5.58,0,0,1-.24-1.27,6.33,6.33,0,0,0,.24,2.33c.53,1.72,2.48,3.13,4.12,2.4,0-.35-.07-.7-.08-1C375.93,519,374,517.57,373.51,515.89Z",
+                transform: "translate(-35 -15.95)"
+              }
+            })
+          ]),
+          _c("path", {
+            attrs: {
+              d: "M295,847.42s2.47,4.34,11.43.51",
+              transform: "translate(-35 -15.95)",
+              opacity: "0.1"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d: "M370.65,848.46s7.73,9.09,17.46,3",
+              transform: "translate(-35 -15.95)",
+              opacity: "0.1"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d: "M393.13,740.94s-5.46,3.41-5.64,5.36,2.82-1.42,2.82-1.42Z",
+              transform: "translate(-35 -15.95)",
+              opacity: "0.1"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M395.28,767.08a11.33,11.33,0,0,1-6.72,2.62c-4.08.18-3.74,5.5-1.07,3.9S395.28,767.08,395.28,767.08Z",
+              transform: "translate(-35 -15.95)",
+              opacity: "0.1"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d: "M396.32,770.49s-2.62,12.86-4.75,10.38",
+              transform: "translate(-35 -15.95)",
+              opacity: "0.1"
+            }
+          }),
+          _c("g", { attrs: { opacity: "0.5" } }, [
+            _c("rect", {
+              attrs: {
+                x: "471.17",
+                y: "458.65",
+                width: "66",
+                height: "14",
+                fill: "#dce0ed"
+              }
+            }),
+            _c("rect", {
+              attrs: {
+                x: "622.72",
+                y: "458.65",
+                width: "66",
+                height: "14",
+                fill: "#dce0ed"
+              }
+            }),
+            _c("rect", {
+              attrs: {
+                x: "774.27",
+                y: "458.65",
+                width: "66",
+                height: "14",
+                fill: "#dce0ed"
+              }
+            })
+          ]),
+          _c("ellipse", {
+            attrs: {
+              cx: "952.73",
+              cy: "801.29",
+              rx: "26.93",
+              ry: "4.55",
+              fill: "#6c63ff",
+              opacity: "0.1"
+            }
+          }),
+          _c("ellipse", {
+            attrs: {
+              cx: "115.22",
+              cy: "858.74",
+              rx: "26.93",
+              ry: "4.55",
+              fill: "#6c63ff",
+              opacity: "0.1"
+            }
+          }),
+          _c("ellipse", {
+            attrs: {
+              cx: "893.79",
+              cy: "850.05",
+              rx: "40.21",
+              ry: "6.8",
+              fill: "#6c63ff"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M945.41,854.89a11.64,11.64,0,0,0,3.83-5.79c.5-2.3-.48-5.05-2.67-5.89-2.46-.94-5.09.76-7.09,2.49s-4.27,3.68-6.88,3.32a10.5,10.5,0,0,0,3.24-9.81,4.08,4.08,0,0,0-.9-2c-1.37-1.46-3.84-.84-5.48.31-5.2,3.66-6.65,10.72-6.68,17.08-.52-2.29-.08-4.68-.09-7s-.66-5-2.64-6.23a8,8,0,0,0-4-.94c-2.34-.09-4.95.14-6.54,1.85-2,2.13-1.47,5.69.25,8s4.36,3.8,6.77,5.42a15.13,15.13,0,0,1,4.84,4.61,4.81,4.81,0,0,1,.35.83h14.66A41.11,41.11,0,0,0,945.41,854.89Z",
+              transform: "translate(-35 -15.95)",
+              fill: "#6c63ff"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M151.45,807.19s5.5,7.19-2.53,18-14.65,20-12,26.77c0,0,12.12-20.15,22-20.43S162.3,819.31,151.45,807.19Z",
+              transform: "translate(-35 -15.95)",
+              fill: "#6c63ff"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M151.45,807.19a9,9,0,0,1,1.13,2.26c9.62,11.3,14.74,21.85,5.49,22.11-8.61.25-18.94,15.65-21.42,19.54a9.24,9.24,0,0,0,.29.89s12.12-20.15,22-20.43S162.3,819.31,151.45,807.19Z",
+              transform: "translate(-35 -15.95)",
+              opacity: "0.1"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M161.66,816.35c0,2.53-.28,4.58-.63,4.58s-.63-2-.63-4.58.35-1.34.7-1.34S161.66,813.82,161.66,816.35Z",
+              transform: "translate(-35 -15.95)",
+              fill: "#ffd037"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M165.17,819.37c-2.22,1.21-4.16,1.94-4.32,1.63s1.49-1.54,3.71-2.75,1.35-.33,1.51,0S167.39,818.16,165.17,819.37Z",
+              transform: "translate(-35 -15.95)",
+              fill: "#ffd037"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M122.44,807.19s-5.5,7.19,2.53,18,14.65,20,12,26.77c0,0-12.11-20.15-22-20.43S111.59,819.31,122.44,807.19Z",
+              transform: "translate(-35 -15.95)",
+              fill: "#6c63ff"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M122.44,807.19a9,9,0,0,0-1.13,2.26c-9.62,11.3-14.74,21.85-5.49,22.11,8.61.25,18.94,15.65,21.42,19.54a7.16,7.16,0,0,1-.3.89s-12.11-20.15-22-20.43S111.59,819.31,122.44,807.19Z",
+              transform: "translate(-35 -15.95)",
+              opacity: "0.1"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M112.22,816.35c0,2.53.29,4.58.64,4.58s.63-2,.63-4.58-.35-1.34-.7-1.34S112.22,813.82,112.22,816.35Z",
+              transform: "translate(-35 -15.95)",
+              fill: "#ffd037"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M108.72,819.37c2.22,1.21,4.15,1.94,4.32,1.63s-1.49-1.54-3.71-2.75-1.35-.33-1.52,0S106.5,818.16,108.72,819.37Z",
+              transform: "translate(-35 -15.95)",
+              fill: "#ffd037"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M114,851.05s15.36-.48,20-3.77,23.63-7.24,24.78-1.95,23.08,26.29,5.74,26.43-40.29-2.7-44.91-5.51S114,851.05,114,851.05Z",
+              transform: "translate(-35 -15.95)",
+              fill: "#a8a8a8"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M164.79,869.92c-17.34.14-40.3-2.7-44.92-5.51-3.51-2.15-4.92-9.84-5.38-13.38l-.52,0s1,12.38,5.6,15.2,27.57,5.65,44.91,5.51c5,0,6.73-1.82,6.64-4.46C170.42,868.9,168.51,869.89,164.79,869.92Z",
+              transform: "translate(-35 -15.95)",
+              opacity: "0.2"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M501.5,572.37c0-20.44,16.63-36.14,37.08-36.14h.29v-9.3h-.29c-25.58,0-46.38,19.87-46.38,45.44a46.26,46.26,0,0,0,15.89,34.9l6.59-6.59A37,37,0,0,1,501.5,572.37Z",
+              transform: "translate(-35 -15.95)",
+              fill: "#6c63ff"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M539.8,526.94v9.3a37.07,37.07,0,1,1-24.19,65.37L509,608.2a46.36,46.36,0,1,0,30.78-81.26Z",
+              transform: "translate(-35 -15.95)",
+              fill: "#6c63ff",
+              opacity: "0.5"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M843.8,535.76c20.44,0,36.14,16.63,36.14,37.08,0,.09,0,.19,0,.29h9.3c0-.1,0-.2,0-.29,0-25.57-19.87-46.38-45.44-46.38a46.24,46.24,0,0,0-34.9,15.89l6.59,6.59A37,37,0,0,1,843.8,535.76Z",
+              transform: "translate(-35 -15.95)",
+              fill: "#6c63ff",
+              opacity: "0.5"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M889.23,574.06h-9.3a37.07,37.07,0,1,1-65.37-24.19L808,543.28a46.36,46.36,0,1,0,81.26,30.78Z",
+              transform: "translate(-35 -15.95)",
+              fill: "#6c63ff"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M709,529.66l-1.85,9.26c13.61,5.49,22.31,18.83,22.31,34.38a37.07,37.07,0,1,1-51.93-33.95L673.41,531A46.36,46.36,0,1,0,738.8,573.3C738.8,553.23,726.92,536.11,709,529.66Z",
+              transform: "translate(-35 -15.95)",
+              fill: "#6c63ff",
+              opacity: "0.5"
+            }
+          }),
+          _c("path", {
+            attrs: {
+              d:
+                "M693.59,535.69a32.38,32.38,0,0,1,12.91,2.68l1.85-9.25a40.9,40.9,0,0,0-14.76-2.73,46.17,46.17,0,0,0-19,4.09l4.16,8.33A36.69,36.69,0,0,1,693.59,535.69Z",
+              transform: "translate(-35 -15.95)",
+              fill: "#6c63ff"
+            }
+          })
+        ]
+      )
+    ])
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Developer.vue?vue&type=template&id=5932c622&":
 /*!************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Developer.vue?vue&type=template&id=5932c622& ***!
@@ -64677,6 +66206,522 @@ render._withStripped = true
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/NotFound.vue?vue&type=template&id=2ce50e5a&":
+/*!***********************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/NotFound.vue?vue&type=template&id=2ce50e5a& ***!
+  \***********************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "container" }, [
+    _c("div", { staticClass: "row justify-content-center" }, [
+      _c("div", { staticClass: "col-md-10 mt-5" }, [
+        _c(
+          "svg",
+          {
+            attrs: {
+              id: "fd59ce54-f850-4dfc-bc34-dd7d379d600e",
+              "data-name": "Layer 1",
+              xmlns: "http://www.w3.org/2000/svg",
+              width: "800.392",
+              height: "400.231",
+              viewBox: "0 0 1074.392 584.231"
+            }
+          },
+          [
+            _c("title", [_vm._v("page not found")]),
+            _c("ellipse", {
+              attrs: {
+                cx: "540.64346",
+                cy: "549.3094",
+                rx: "527.5",
+                ry: "34.9216",
+                fill: "#f2f2f2"
+              }
+            }),
+            _c("path", {
+              attrs: {
+                d:
+                  "M583.47969,324.89424c-85.94407,0-147.651,55.13938-147.651,183.79791,0,145.813,61.70691,184.41057,147.651,184.41057s151.327-42.27352,151.327-184.41057C734.80664,356.75255,669.42376,324.89424,583.47969,324.89424Zm.56495,319.80837c-59.52686,0-90.62592-34.92288-90.62592-135.9163,0-89.11185,32.37209-136.10461,91.899-136.10461s91.899,30.86774,91.899,136.10461C677.21663,607.23367,643.5715,644.70261,584.04464,644.70261Z",
+                transform: "translate(-63.054 -157.8845)",
+                fill: "#2f2e41"
+              }
+            }),
+            _c("path", {
+              attrs: {
+                d:
+                  "M384.36531,591.40121H348.831V486.76183A20.95585,20.95585,0,0,0,327.87517,465.806h-8.32638a20.95585,20.95585,0,0,0-20.95586,20.95585V591.40121H198.36285a11.96327,11.96327,0,0,1-10.57763-17.552l106.0824-200.78034A20.95585,20.95585,0,0,0,284.28724,344.33l-6.26231-2.9572a20.95585,20.95585,0,0,0-27.4293,9.07005L121.21416,592.4754a28.41578,28.41578,0,0,0-3.35584,13.39612v0a28.41583,28.41583,0,0,0,28.41584,28.41583H298.59293v66.16727a25.119,25.119,0,0,0,25.119,25.119h.00005a25.119,25.119,0,0,0,25.119-25.119V634.28739h35.53428a21.44307,21.44307,0,0,0,21.44307-21.44307v0A21.44307,21.44307,0,0,0,384.36531,591.40121Z",
+                transform: "translate(-63.054 -157.8845)",
+                fill: "#6c63ff"
+              }
+            }),
+            _c("path", {
+              attrs: {
+                d:
+                  "M1042.36183,591.40121h-35.53428V486.76183A20.95585,20.95585,0,0,0,985.87169,465.806h-8.32638a20.95585,20.95585,0,0,0-20.95586,20.95585V591.40121H856.35937a11.96326,11.96326,0,0,1-10.57763-17.552L951.86413,373.06891A20.95586,20.95586,0,0,0,942.28376,344.33l-6.26231-2.9572a20.95586,20.95586,0,0,0-27.42931,9.07005L779.21068,592.4754a28.41578,28.41578,0,0,0-3.35584,13.39612v0a28.41583,28.41583,0,0,0,28.41583,28.41583H956.58945v66.16727a25.119,25.119,0,0,0,25.119,25.119h0a25.119,25.119,0,0,0,25.119-25.119V634.28739h35.53428a21.44307,21.44307,0,0,0,21.44307-21.44307v0A21.44307,21.44307,0,0,0,1042.36183,591.40121Z",
+                transform: "translate(-63.054 -157.8845)",
+                fill: "#6c63ff"
+              }
+            }),
+            _c("path", {
+              attrs: {
+                d:
+                  "M394.16787,579.148H358.63358V474.50864a20.95585,20.95585,0,0,0-20.95585-20.95586h-8.32638a20.95586,20.95586,0,0,0-20.95586,20.95586V579.148H208.16541a11.96327,11.96327,0,0,1-10.57763-17.552L303.67017,360.81572a20.95586,20.95586,0,0,0-9.58037-28.73893l-6.26231-2.9572a20.95586,20.95586,0,0,0-27.42931,9.07L131.01672,580.2222a28.41582,28.41582,0,0,0-3.35584,13.39613v0a28.41583,28.41583,0,0,0,28.41583,28.41583H308.39549v66.16727a25.119,25.119,0,0,0,25.119,25.119h.00005a25.119,25.119,0,0,0,25.119-25.119V622.0342h35.53429a21.44307,21.44307,0,0,0,21.44307-21.44307v0A21.44307,21.44307,0,0,0,394.16787,579.148Z",
+                transform: "translate(-63.054 -157.8845)",
+                fill: "none",
+                stroke: "#3f3d56",
+                "stroke-miterlimit": "10"
+              }
+            }),
+            _c("path", {
+              attrs: {
+                d:
+                  "M1060.74162,579.148h-35.53428V474.50864a20.95586,20.95586,0,0,0-20.95586-20.95586H995.9251a20.95586,20.95586,0,0,0-20.95586,20.95586V579.148H874.73916a11.96327,11.96327,0,0,1-10.57763-17.552L970.24392,360.81572a20.95586,20.95586,0,0,0-9.58037-28.73893l-6.26231-2.9572a20.95586,20.95586,0,0,0-27.42931,9.07L797.59047,580.2222a28.41582,28.41582,0,0,0-3.35584,13.39613v0a28.41583,28.41583,0,0,0,28.41583,28.41583H974.96924v66.16727a25.119,25.119,0,0,0,25.119,25.119h0a25.119,25.119,0,0,0,25.119-25.119V622.0342h35.53428a21.44307,21.44307,0,0,0,21.44307-21.44307v0A21.44307,21.44307,0,0,0,1060.74162,579.148Z",
+                transform: "translate(-63.054 -157.8845)",
+                fill: "none",
+                stroke: "#3f3d56",
+                "stroke-miterlimit": "10"
+              }
+            }),
+            _c("path", {
+              attrs: {
+                d:
+                  "M603.0848,313.86637c-85.94407,0-147.651,55.13937-147.651,183.79791,0,145.813,61.70691,184.41057,147.651,184.41057s151.327-42.27352,151.327-184.41057C754.41175,345.72467,689.02887,313.86637,603.0848,313.86637Zm.565,319.80836c-59.52686,0-90.62592-34.92287-90.62592-135.91629,0-89.11185,32.37209-136.10461,91.899-136.10461s91.899,30.86774,91.899,136.10461C696.82174,596.20579,663.17661,633.67473,603.64975,633.67473Z",
+                transform: "translate(-63.054 -157.8845)",
+                fill: "none",
+                stroke: "#3f3d56",
+                "stroke-miterlimit": "10"
+              }
+            }),
+            _c("circle", {
+              attrs: {
+                cx: "471.14108",
+                cy: "18.25044",
+                r: "12.90118",
+                fill: "#2f2e41"
+              }
+            }),
+            _c("ellipse", {
+              attrs: {
+                cx: "502.60736",
+                cy: "46.88476",
+                rx: "36.18622",
+                ry: "46.88476",
+                fill: "#2f2e41"
+              }
+            }),
+            _c("path", {
+              attrs: {
+                d:
+                  "M565.66136,237.49419c-18.1276,0-33.1413-17.27052-35.77576-39.80484a60.9759,60.9759,0,0,0-.41046,7.07991c0,25.89373,16.20114,46.88476,36.18622,46.88476s36.18623-20.991,36.18623-46.88476a60.9759,60.9759,0,0,0-.41046-7.07991C598.80267,220.22367,583.789,237.49419,565.66136,237.49419Z",
+                transform: "translate(-63.054 -157.8845)",
+                opacity: "0.1"
+              }
+            }),
+            _c("path", {
+              attrs: {
+                d:
+                  "M639.29619,342.07326c-.77711,3.19345-4.12792,5.751-7.83881,7.53791-7.80188,3.75682-17.4253,4.87788-26.7597,5.25418a45.17622,45.17622,0,0,1-7.1445-.132,20.5371,20.5371,0,0,1-12.25052-5.63141,1.68086,1.68086,0,0,1,.04371-2.84388c4.9694-5.45888,13.2622-8.80605,21.61613-11.21609,6.3344-1.82743,17.3813-6.56089,24.29013-5.9221C637.94444,329.73864,640.2774,338.04112,639.29619,342.07326Z",
+                transform: "translate(-63.054 -157.8845)",
+                fill: "#3f3d56"
+              }
+            }),
+            _c("path", {
+              attrs: {
+                d:
+                  "M639.29619,342.07326c-.77711,3.19345-4.12792,5.751-7.83881,7.53791-7.80188,3.75682-17.4253,4.87788-26.7597,5.25418a45.17622,45.17622,0,0,1-7.1445-.132,20.5371,20.5371,0,0,1-12.25052-5.63141,1.68086,1.68086,0,0,1,.04371-2.84388c4.9694-5.45888,13.2622-8.80605,21.61613-11.21609,6.3344-1.82743,17.3813-6.56089,24.29013-5.9221C637.94444,329.73864,640.2774,338.04112,639.29619,342.07326Z",
+                transform: "translate(-63.054 -157.8845)",
+                opacity: "0.1"
+              }
+            }),
+            _c("path", {
+              attrs: {
+                d:
+                  "M540.09786,318.2059a19.76967,19.76967,0,0,0-1.1987,15.07476,26.33914,26.33914,0,0,0,8.82921,12.49683c10.09467,8.09163,23.98784,9.20512,36.92477,9.09278a284.6495,284.6495,0,0,0,33.90525-2.32384,40.53788,40.53788,0,0,0,11.00143-2.55442c4.22242-1.82679,7.93282-5.17756,9.436-9.5257s.43625-9.67246-3.13383-12.57428c-3.13686-2.54969-7.46265-2.9004-11.49775-3.14289l-23.08764-1.38745c2.281-2.30839,5.31816-3.614,8.09586-5.29216,3.68523-2.22642,6.13358-5.96455,8.81312-9.33471a129.00143,129.00143,0,0,1,13.4386-13.817c.75138,4.31038,3.4782,7.8499,6.68733,10.824s6.90841,5.36845,10.2439,8.20013c8.0786,6.85838,13.89583,16.1669,22.39215,22.50043a43.82885,43.82885,0,0,0,16.04862-8.0122l-3.30209-5.98141a3.94,3.94,0,0,0-1.24459-1.55282c-.93465-.575-2.13975-.27872-3.225-.44144-2.90082-.435-4.16771-3.784-5.306-6.48737-3.12491-7.42173-9.108-13.17993-14.21783-19.40381a98.00854,98.00854,0,0,1-9.99577-14.72284c-1.71652-3.10162-3.288-6.33107-5.61746-9.00321s-5.59358-4.773-9.1385-4.78051c-3.13222-.00662-6.02122,1.58355-8.71422,3.18308a230.47679,230.47679,0,0,0-23.63018,16.09894c-3.94376,3.0617-7.86306,6.29645-12.48933,8.17393-1.94748.79035-4.00044,1.33052-5.86924,2.29223-3.27313,1.6844-5.75721,4.53435-8.43128,7.06415C566.27712,311.89225,553.219,317.73841,540.09786,318.2059Z",
+                transform: "translate(-63.054 -157.8845)",
+                fill: "#3f3d56"
+              }
+            }),
+            _c("path", {
+              attrs: {
+                d:
+                  "M588.3737,253.98251a23.77444,23.77444,0,0,1-1.73379,8.03335,10.04492,10.04492,0,0,1-5.76772,5.57269,12.37513,12.37513,0,0,1-5.62306.18249,10.88232,10.88232,0,0,1-4.58151-1.56071c-2.16484-1.48837-3.24415-4.14413-3.63748-6.74325-.39333-2.596-.21714-5.24857-.46885-7.86342a42.94439,42.94439,0,0,0-1.202-6.25549c-.16993-.68282-.343-1.36248-.51294-2.04216-.16674-.67967-.33037-1.35935-.48141-2.039-.13847-.63878-.26745-1.28068-.37761-1.92574-.09123-.54436-.173-1.09189-.23285-1.64255a18.42329,18.42329,0,0,0-.80867-4.81118,14.60727,14.60727,0,0,0-1.68659-2.854c-.28635-.40906-.56326-.81811-.81815-1.24292a5.88984,5.88984,0,0,1-.97226-3.74763,3.286,3.286,0,0,1,.14788-.601c.02516-.07552.05347-.151.085-.2234A1.80187,1.80187,0,0,0,560.932,223.07a3.43341,3.43341,0,0,0-.14788-1.77783,11.31808,11.31808,0,0,0-.95974-2.28761c-.2643-.47829-1.16108-1.34046-1.16738-1.888-.0126-1.10132,2.13972-1.98867,3.01134-2.42291a16.79623,16.79623,0,0,1,8.59657-1.74323c1.90369.129,3.9679.71428,5.0189,2.30962.944,1.438.81807,3.30081,1.22085,4.97169a1.47068,1.47068,0,0,0,.29892.66393,1.34135,1.34135,0,0,0,.73948.33982,4.54948,4.54948,0,0,0,1.416.05666h.00315a2.93138,2.93138,0,0,0,.37128-.05351,4.957,4.957,0,0,0,2.03271-.8779q.58531-.15576,1.18-.25488a.25112.25112,0,0,0,.04725-.00945c1.57646,4.97482,1.781,10.30836,3.07111,15.37444.63874,2.52044,1.55442,5.00943,1.6834,7.60225.00945.11327.0126.2297.01575.34612.0189.83386-.04717,1.674-.0126,2.50472a6.981,6.981,0,0,0,.12591,1.1139,15.61121,15.61121,0,0,0,.52546,1.74325l.00945.02831c.05977.18251.11643.36817.16363.55381.03457.1353.06607.26747.09127.40277l.00311.00943A14.93754,14.93754,0,0,1,588.3737,253.98251Z",
+                transform: "translate(-63.054 -157.8845)",
+                fill: "#fbbebe"
+              }
+            }),
+            _c("circle", {
+              attrs: {
+                cx: "503.23669",
+                cy: "44.99678",
+                r: "18.56511",
+                fill: "#fbbebe"
+              }
+            }),
+            _c("path", {
+              attrs: {
+                d:
+                  "M684.15711,304.03278a30.445,30.445,0,0,0-5.236-14.10317q.72216,4.29513,1.44748,8.58714a3.214,3.214,0,0,1-3.36688-1.03523,10.33663,10.33663,0,0,1-1.76529-3.27565,67.46571,67.46571,0,0,0-8.2095-14.73567c-11.81876-.98489-23.50223-5.88418-33.89555-11.59532-10.39643-5.708-20.12582-12.5519-30.38382-18.50217a43.57346,43.57346,0,0,0-5.54436-2.832c-3.20954-1.287-6.81242-1.95406-9.85526-3.46759-.2045-.1007-.409-.20767-.61043-.31781a12.57834,12.57834,0,0,1-1.94459-1.30584,10.34363,10.34363,0,0,1-.93139-.8559,20.35115,20.35115,0,0,1-3.55886-5.95341c-1.63308-3.61232-2.21524-7.97041-3.84517-11.58274a11.20292,11.20292,0,0,1,2.50156-1.76525h.00315c.13213-.06924.2643-.13532.39962-.19824a11.9404,11.9404,0,0,1,2.00437-.73317q.58531-.15576,1.18-.25488a.25112.25112,0,0,0,.04725-.00945,11.56564,11.56564,0,0,1,5.49085.43424c2.58652.87477,4.76711,2.62115,6.94148,4.27313a114.02006,114.02006,0,0,1,10.14787,8.04908c1.79357,1.718,3.4298,3.606,5.35868,5.16676a42.14393,42.14393,0,0,0,5.05662,3.35116q15.65613,9.32658,31.31525,18.65005c3.53365,2.1051,7.07046,4.21019,10.52553,6.438,5.24855,3.38578,10.30828,7.05474,15.36493,10.72057q4.46978,3.23787,8.93647,6.47889a9.72771,9.72771,0,0,1,2.533,2.3411,8.4724,8.4724,0,0,1,1.12337,3.433A31.3874,31.3874,0,0,1,684.15711,304.03278Z",
+                transform: "translate(-63.054 -157.8845)",
+                fill: "#fbbebe"
+              }
+            }),
+            _c("path", {
+              attrs: {
+                d:
+                  "M592.97726,267.9441c-1.25235,5.61674-6.92888,9.012-9.89617,13.94586-3.68784,6.12335-2.18378,13.241-.79922,20.25484q-3.79485,3.27095-7.59285,6.54186c-1.39708,1.19886-2.79417,2.404-4.29827,3.46444a57.35064,57.35064,0,0,1-6.85966,3.93956q-3.3606,1.72752-6.72119,3.45814a32.1282,32.1282,0,0,1-6.57961,2.78793c-4.41473,1.13278-9.10318.33982-13.4707-.97232a6.08761,6.08761,0,0,1-1.47264-.601,2.39351,2.39351,0,0,1-.69854-.63248,3.91067,3.91067,0,0,1-.44365-2.53933c.44365-7.35052,2.24036-14.54686,4.03081-21.68971a85.2598,85.2598,0,0,1,3.84832-12.57708,85.0766,85.0766,0,0,1,5.41538-10.151,68.36751,68.36751,0,0,1,7.92948-11.51353,18.47881,18.47881,0,0,0,3.67525-4.73882c1.11706-2.54876.686-5.472.91252-8.24732a17.14844,17.14844,0,0,1,1.63312-6.0069v-.00315a17.09326,17.09326,0,0,1,1.74321-2.88232q.45788,1.06671.91568,2.13027.30209.69855.59783,1.394.38706.89679.7678,1.78728,1.09973,2.55823,2.19637,5.11327a21.58968,21.58968,0,0,0,3.33538,5.944,6.49923,6.49923,0,0,0,11.12337-.85275,21.26125,21.26125,0,0,0,2.27185-6.0132,19.21547,19.21547,0,0,0,.25175-7.83509c-.75835-5.00945-2.88862-10.12585-4.43678-14.77972a14.94511,14.94511,0,0,1-1.07927-4.871,3.35144,3.35144,0,0,1,.05662-.56011c.00945-.04719.0189-.09754.02834-.14473a11.9404,11.9404,0,0,1,2.00437-.73317q.58531-.15576,1.18-.25488,2.04378,11.06355,4.09377,22.12709c.0315.17307.0661.34613.09756.52234.19509,1.05726.39333,2.11454.61358,3.16865.19828.95657.41223,1.91.65137,2.85715l.00945.02831c.08182.321.16678.63877.2549.95658l.00311.00943c.2423.86848.5129,1.73065.81811,2.58024C590.93825,257.47528,594.16355,262.62946,592.97726,267.9441Z",
+                transform: "translate(-63.054 -157.8845)",
+                fill: "#6c63ff"
+              }
+            }),
+            _c("path", {
+              attrs: {
+                d:
+                  "M668.32144,346.87707a6.58269,6.58269,0,0,0,.61,3.14328c1.16192,2.12353,3.94981,2.60625,6.36228,2.80484a188.37688,188.37688,0,0,0,42.2657-1.28774,4.88565,4.88565,0,0,0,2.15136-.66766c1.98985-1.39509.76329-4.7951-1.40951-5.88355s-4.75126-.82614-7.1353-1.29748a22.47912,22.47912,0,0,1-6.67794-2.89617q-7.25234-4.16669-14.293-8.68808c-2.79453-1.79464-6.09272-3.70993-9.23987-2.64587C672.43,332.34264,668.26533,337.68065,668.32144,346.87707Z",
+                transform: "translate(-63.054 -157.8845)",
+                fill: "#3f3d56"
+              }
+            }),
+            _c("path", {
+              attrs: {
+                d:
+                  "M564.43732,240.87367v.00315c-.022.13215-.04406.26116-.07237.39018-.0346.214-.07551.43108-.11642.645-.39018,1.99812-.86847,3.98678-1.41913,5.96287-1.5104,5.45939-3.53366,10.83069-5.54121,16.12332q-8.08055,21.28692-16.16423,42.577c-1.35936,3.57457-2.71554,7.15228-4.26054,10.65448-.516,1.16741-1.04782,2.34424-1.57647,3.53368-1.89427,4.25737-3.713,8.65322-4.31716,13.18436a27.44976,27.44976,0,0,0-.19194,9.04027c.60416,2.97042,2.40718,5.8716,5.22969,6.96977,1.37823.53808,3.35113,1.25865,2.97355,2.69037-.2045.78665-1.09817,1.17055-1.90057,1.3027a7.31234,7.31234,0,0,1-5.966-1.718c-1.50725-1.33732-2.66518-3.41725-4.66959-3.64065-1.38767-.151-2.66518.67966-3.93643,1.26178-5.18564,2.36942-11.22719.71114-16.674-.9723.42794-2.20579,2.64318-3.65953,4.84267-4.10006,2.19949-.44367,4.47449-.129,6.718-.18879a3.50958,3.50958,0,0,0,2.04216-.52549,3.70545,3.70545,0,0,0,1.10132-1.88169,78.96356,78.96356,0,0,0,3.21273-13.14661c.7237-4.66645,1.02581-9.40527,2.05787-14.01507.80241-3.59661,2.0422-7.07991,3.10572-10.61044a224.68238,224.68238,0,0,0,5.0598-22.07674,78.02019,78.02019,0,0,0,1.42543-9.36751c.17935-2.6117.09438-5.236.34609-7.83826a60.8877,60.8877,0,0,1,2.11141-9.99683q1.44427-5.34769,2.88547-10.68911c1.42544-5.2706,2.95465-10.74572,6.567-14.84264a13.96159,13.96159,0,0,1,10.02834-4.78915,9.8819,9.8819,0,0,1,2.13027.22969c.11639.02831.23285.05664.34923.0881a8.63447,8.63447,0,0,1,2.17437.89995c1.11388-.708,1.68025-.45942,2.41974.63246a6.97319,6.97319,0,0,1,.88107,3.79485A52.42378,52.42378,0,0,1,564.43732,240.87367Z",
+                transform: "translate(-63.054 -157.8845)",
+                fill: "#fbbebe"
+              }
+            }),
+            _c("path", {
+              attrs: {
+                d:
+                  "M565.66136,245.0461l-.0472.04719-.25486.25488-2.5299,2.52675-1.23976-5.20767-4.25109-17.854a9.8819,9.8819,0,0,1,2.13027.22969,3.286,3.286,0,0,1,.14788-.601l.20135.68911,1.44118,4.90245,2.72811,9.30773.45,1.53241v.00315Z",
+                transform: "translate(-63.054 -157.8845)",
+                fill: "#6c63ff"
+              }
+            }),
+            _c("path", {
+              attrs: {
+                d:
+                  "M581.71523,188.0873a12.58165,12.58165,0,0,1-3.70049,8.89583,12.31392,12.31392,0,0,1-1.36008,1.17634,12.52812,12.52812,0,0,1-7.53567,2.52415H554.023a12.5902,12.5902,0,0,1,0-25.18037h15.096A12.62919,12.62919,0,0,1,581.71523,188.0873Z",
+                transform: "translate(-63.054 -157.8845)",
+                fill: "#2f2e41"
+              }
+            }),
+            _c("circle", {
+              attrs: {
+                cx: "532.81499",
+                cy: "18.25044",
+                r: "12.90118",
+                fill: "#2f2e41"
+              }
+            }),
+            _c("path", {
+              attrs: {
+                d:
+                  "M595.55433,163.23377c-.15825,0-.31505.00628-.472.01193a12.89776,12.89776,0,0,1,0,25.77849c.15694.00565.31374.01193.472.01193a12.90117,12.90117,0,1,0,0-25.80235Z",
+                transform: "translate(-63.054 -157.8845)",
+                opacity: "0.1"
+              }
+            }),
+            _c("path", {
+              attrs: {
+                d:
+                  "M534.19508,163.23377c.15825,0,.31505.00628.472.01193a12.89776,12.89776,0,0,0,0,25.77849c-.157.00565-.31375.01193-.472.01193a12.90118,12.90118,0,0,1,0-25.80235Z",
+                transform: "translate(-63.054 -157.8845)",
+                opacity: "0.1"
+              }
+            }),
+            _c("path", {
+              attrs: {
+                d:
+                  "M576.65466,198.15947a12.52812,12.52812,0,0,1-7.53567,2.52415H554.023a12.52833,12.52833,0,0,1-7.53574-2.52415Z",
+                transform: "translate(-63.054 -157.8845)",
+                opacity: "0.1"
+              }
+            }),
+            _c("path", {
+              attrs: {
+                d:
+                  "M674.13958,291.64042s3.25228,9.37161,6.229,6.87633L677.996,286.26693Z",
+                transform: "translate(-63.054 -157.8845)",
+                fill: "#fbbebe"
+              }
+            }),
+            _c("path", {
+              attrs: {
+                d:
+                  "M1069.91781,577.43414a20.81252,20.81252,0,1,0,2.7716-39.91524l.52093,10.7122-5.06814-9.18045a20.734,20.734,0,0,0-10.68367,11.72261,20.40847,20.40847,0,0,0-1.19713,5.62986A20.80856,20.80856,0,0,0,1069.91781,577.43414Z",
+                transform: "translate(-63.054 -157.8845)",
+                fill: "#57b894"
+              }
+            }),
+            _c("path", {
+              attrs: {
+                d:
+                  "M1094.99516,701.67756c-1.78906-9.11027,5.9633-17.1868,13.62086-22.43651s16.605-10.40779,19.21775-19.31684c3.755-12.80387-7.43-24.52981-16.13564-34.64176a125.30044,125.30044,0,0,1-16.52359-24.55738c-1.81107-3.5325-3.47558-7.22528-3.95221-11.16626-.68641-5.67546,1.13693-11.32309,2.9739-16.73673q9.17925-27.05169,19.62843-53.65005",
+                transform: "translate(-63.054 -157.8845)",
+                fill: "none",
+                stroke: "#3f3d56",
+                "stroke-miterlimit": "10"
+              }
+            }),
+            _c("path", {
+              attrs: {
+                d:
+                  "M1070.77493,574.6762a20.81252,20.81252,0,1,0,2.7716-39.91524l.52093,10.7122-5.06815-9.18045a20.734,20.734,0,0,0-10.68366,11.72261,20.40847,20.40847,0,0,0-1.19713,5.62986A20.80855,20.80855,0,0,0,1070.77493,574.6762Z",
+                transform: "translate(-63.054 -157.8845)",
+                fill: "none",
+                stroke: "#3f3d56",
+                "stroke-miterlimit": "10"
+              }
+            }),
+            _c("path", {
+              attrs: {
+                d:
+                  "M1092.45136,515.47266a20.78819,20.78819,0,0,1,14.97993-13.19764l1.71361,10.18378,3.177-10.69566a20.81,20.81,0,1,1-19.87057,13.70952Z",
+                transform: "translate(-63.054 -157.8845)",
+                fill: "#57b894"
+              }
+            }),
+            _c("path", {
+              attrs: {
+                d:
+                  "M1093.59418,511.7954a20.7882,20.7882,0,0,1,14.97993-13.19763l1.71361,10.18378,3.177-10.69567a20.81,20.81,0,1,1-19.87057,13.70952Z",
+                transform: "translate(-63.054 -157.8845)",
+                fill: "none",
+                stroke: "#3f3d56",
+                "stroke-miterlimit": "10"
+              }
+            }),
+            _c("path", {
+              attrs: {
+                d:
+                  "M1108.04474,625.48885a20.81,20.81,0,0,0,18.419-37.02267l-2.44121,8.21926-1.73105-10.30382a.36183.36183,0,0,0-.053-.0201,20.81113,20.81113,0,1,0-14.1938,39.12733Z",
+                transform: "translate(-63.054 -157.8845)",
+                fill: "#57b894"
+              }
+            }),
+            _c("path", {
+              attrs: {
+                d:
+                  "M1109.035,621.76417a20.81,20.81,0,0,0,18.419-37.02267l-2.44121,8.21926-1.73105-10.30382a.3621.3621,0,0,0-.053-.0201,20.81113,20.81113,0,1,0-14.1938,39.12733Z",
+                transform: "translate(-63.054 -157.8845)",
+                fill: "none",
+                stroke: "#3f3d56",
+                "stroke-miterlimit": "10"
+              }
+            }),
+            _c("path", {
+              attrs: {
+                d:
+                  "M1086.37782,660.05148a20.80131,20.80131,0,1,0,4.01058-16.29737l9.27267,13.95654-12.66994-7.40768A20.61638,20.61638,0,0,0,1086.37782,660.05148Z",
+                transform: "translate(-63.054 -157.8845)",
+                fill: "#57b894"
+              }
+            }),
+            _c("path", {
+              attrs: {
+                d:
+                  "M1087.23494,657.29354a20.80131,20.80131,0,1,0,4.01058-16.29737l9.27267,13.95655-12.66994-7.40769A20.61626,20.61626,0,0,0,1087.23494,657.29354Z",
+                transform: "translate(-63.054 -157.8845)",
+                fill: "none",
+                stroke: "#3f3d56",
+                "stroke-miterlimit": "10"
+              }
+            }),
+            _c("path", {
+              attrs: {
+                d:
+                  "M72.06146,628.13325a13.67421,13.67421,0,1,0,1.821-26.225l.34227,7.03811-3.32987-6.03172a13.62263,13.62263,0,0,0-7.01936,7.702,13.40883,13.40883,0,0,0-.78654,3.69893A13.6716,13.6716,0,0,0,72.06146,628.13325Z",
+                transform: "translate(-63.054 -157.8845)",
+                fill: "#57b894"
+              }
+            }),
+            _c("path", {
+              attrs: {
+                d:
+                  "M88.53774,709.76344c-1.17545-5.98561,3.918-11.292,8.94915-14.7412s10.90978-6.8381,12.62642-12.69151c2.46711-8.41238-4.88167-16.11653-10.60142-22.76027A82.32442,82.32442,0,0,1,88.6556,643.43581a22.20962,22.20962,0,0,1-2.59668-7.33643c-.451-3.72888.747-7.43947,1.95391-10.99634q6.03093-17.77346,12.89623-35.24906",
+                transform: "translate(-63.054 -157.8845)",
+                fill: "none",
+                stroke: "#3f3d56",
+                "stroke-miterlimit": "10"
+              }
+            }),
+            _c("path", {
+              attrs: {
+                d:
+                  "M72.62461,626.32123a13.6742,13.6742,0,1,0,1.821-26.225l.34227,7.03812L71.458,601.10258a13.62262,13.62262,0,0,0-7.01936,7.702,13.40912,13.40912,0,0,0-.78654,3.69892A13.67158,13.67158,0,0,0,72.62461,626.32123Z",
+                transform: "translate(-63.054 -157.8845)",
+                fill: "none",
+                stroke: "#3f3d56",
+                "stroke-miterlimit": "10"
+              }
+            }),
+            _c("path", {
+              attrs: {
+                d:
+                  "M86.86641,587.42343a13.65822,13.65822,0,0,1,9.84209-8.67109l1.12587,6.69093,2.08737-7.02725a13.67252,13.67252,0,1,1-13.05533,9.00741Z",
+                transform: "translate(-63.054 -157.8845)",
+                fill: "#57b894"
+              }
+            }),
+            _c("path", {
+              attrs: {
+                d:
+                  "M87.61727,585.0074a13.65822,13.65822,0,0,1,9.84209-8.67108l1.12587,6.69093L100.6726,576a13.67252,13.67252,0,1,1-13.05533,9.0074Z",
+                transform: "translate(-63.054 -157.8845)",
+                fill: "none",
+                stroke: "#3f3d56",
+                "stroke-miterlimit": "10"
+              }
+            }),
+            _c("path", {
+              attrs: {
+                d:
+                  "M97.11155,659.70607a13.67255,13.67255,0,0,0,12.10164-24.32457l-1.60392,5.4002-1.13733-6.76979a.238.238,0,0,0-.0348-.0132,13.67329,13.67329,0,1,0-9.32559,25.70736Z",
+                transform: "translate(-63.054 -157.8845)",
+                fill: "#57b894"
+              }
+            }),
+            _c("path", {
+              attrs: {
+                d:
+                  "M97.76214,657.25889a13.67255,13.67255,0,0,0,12.10164-24.32457l-1.60392,5.4002-1.13733-6.7698a.238.238,0,0,0-.0348-.0132,13.67329,13.67329,0,1,0-9.32559,25.70737Z",
+                transform: "translate(-63.054 -157.8845)",
+                fill: "none",
+                stroke: "#3f3d56",
+                "stroke-miterlimit": "10"
+              }
+            }),
+            _c("path", {
+              attrs: {
+                d:
+                  "M82.876,682.41435a13.66684,13.66684,0,1,0,2.635-10.70767l6.09231,9.16971-8.32438-4.867A13.54535,13.54535,0,0,0,82.876,682.41435Z",
+                transform: "translate(-63.054 -157.8845)",
+                fill: "#57b894"
+              }
+            }),
+            _c("path", {
+              attrs: {
+                d:
+                  "M83.43913,680.60233a13.66684,13.66684,0,1,0,2.635-10.70767l6.09231,9.16971-8.32439-4.867A13.54535,13.54535,0,0,0,83.43913,680.60233Z",
+                transform: "translate(-63.054 -157.8845)",
+                fill: "none",
+                stroke: "#3f3d56",
+                "stroke-miterlimit": "10"
+              }
+            }),
+            _c("ellipse", {
+              attrs: {
+                cx: "480.946",
+                cy: "319.1155",
+                rx: "17",
+                ry: "22",
+                fill: "#2f2e41"
+              }
+            }),
+            _c("ellipse", {
+              attrs: {
+                cx: "573.446",
+                cy: "319.6155",
+                rx: "17",
+                ry: "22",
+                fill: "#2f2e41"
+              }
+            }),
+            _c("path", {
+              attrs: {
+                d:
+                  "M623.5,542.5c0,9.94-13.88,18-31,18s-31-8.06-31-18c0-8.61,10.41-15.81,24.32-17.57a50.10353,50.10353,0,0,1,6.68-.43,50.69869,50.69869,0,0,1,11.13,1.2C615.25,528.29,623.5,534.84,623.5,542.5Z",
+                transform: "translate(-63.054 -157.8845)",
+                fill: "#2f2e41"
+              }
+            }),
+            _c("ellipse", {
+              attrs: {
+                cx: "484.946",
+                cy: "314.1155",
+                rx: "17",
+                ry: "22",
+                fill: "none",
+                stroke: "#3f3d56",
+                "stroke-miterlimit": "10"
+              }
+            }),
+            _c("ellipse", {
+              attrs: {
+                cx: "577.446",
+                cy: "314.6155",
+                rx: "17",
+                ry: "22",
+                fill: "none",
+                stroke: "#3f3d56",
+                "stroke-miterlimit": "10"
+              }
+            }),
+            _c("ellipse", {
+              attrs: {
+                cx: "533.446",
+                cy: "379.6155",
+                rx: "31",
+                ry: "18",
+                fill: "none",
+                stroke: "#3f3d56",
+                "stroke-miterlimit": "10"
+              }
+            }),
+            _c("path", {
+              attrs: {
+                d:
+                  "M604,527.2a4.93658,4.93658,0,0,1-1.32,3.392A4.33873,4.33873,0,0,1,599.5,532h-10a4.66433,4.66433,0,0,1-4.5-4.8,4.90458,4.90458,0,0,1,.82-2.74134A47.02,47.02,0,0,1,592.5,524a47.66454,47.66454,0,0,1,11.13,1.28A5.06656,5.06656,0,0,1,604,527.2Z",
+                transform: "translate(-63.054 -157.8845)",
+                fill: "#fff"
+              }
+            }),
+            _c("circle", {
+              attrs: { cx: "484.946", cy: "308.1155", r: "5", fill: "#fff" }
+            }),
+            _c("circle", {
+              attrs: { cx: "577.946", cy: "308.1155", r: "5", fill: "#fff" }
+            }),
+            _c("circle", {
+              attrs: {
+                cx: "582.946",
+                cy: "355.1155",
+                r: "5",
+                fill: "#6c63ff",
+                opacity: "0.3"
+              }
+            }),
+            _c("circle", {
+              attrs: {
+                cx: "460.946",
+                cy: "355.1155",
+                r: "5",
+                fill: "#6c63ff",
+                opacity: "0.3"
+              }
+            })
+          ]
+        )
+      ])
+    ])
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Profile.vue?vue&type=template&id=3bd692e4&":
 /*!**********************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Profile.vue?vue&type=template&id=3bd692e4& ***!
@@ -64694,7 +66739,38 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "container" }, [
     _c("div", { staticClass: "row" }, [
-      _vm._m(0),
+      _c("div", { staticClass: "col-md-12 mt-3" }, [
+        _c("div", { staticClass: "card card-widget widget-user" }, [
+          _c(
+            "div",
+            {
+              staticClass: "widget-user-header text-white",
+              staticStyle: {
+                background: "url('./img/profile-back.jpg') center center",
+                "background-size": "cover"
+              }
+            },
+            [
+              _c("h3", { staticClass: "widget-user-username text-right" }, [
+                _vm._v(_vm._s(this.form.name))
+              ]),
+              _vm._v(" "),
+              _c("h5", { staticClass: "widget-user-desc text-right" }, [
+                _vm._v(_vm._s(this.form.type))
+              ])
+            ]
+          ),
+          _vm._v(" "),
+          _c("div", { staticClass: "widget-user-image" }, [
+            _c("img", {
+              staticClass: "img-circle",
+              attrs: { src: _vm.getProfilePhoto(), alt: "User Avatar" }
+            })
+          ]),
+          _vm._v(" "),
+          _vm._m(0)
+        ])
+      ]),
       _vm._v(" "),
       _c("div", { staticClass: "col-md-12" }, [
         _c("div", { staticClass: "card" }, [
@@ -64811,7 +66887,43 @@ var render = function() {
                       )
                     ]),
                     _vm._v(" "),
-                    _vm._m(3),
+                    _c("div", { staticClass: "form-group row" }, [
+                      _c(
+                        "label",
+                        {
+                          staticClass: "col-sm-2 col-form-label",
+                          attrs: { for: "inputExperience" }
+                        },
+                        [_vm._v("Bio")]
+                      ),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-sm-10" }, [
+                        _c("textarea", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.form.bio,
+                              expression: "form.bio"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          attrs: {
+                            id: "inputExperience",
+                            placeholder: "Short Bio"
+                          },
+                          domProps: { value: _vm.form.bio },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.$set(_vm.form, "bio", $event.target.value)
+                            }
+                          }
+                        })
+                      ])
+                    ]),
                     _vm._v(" "),
                     _c("div", { staticClass: "form-group row" }, [
                       _c(
@@ -64908,69 +67020,32 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-md-12 mt-3" }, [
-      _c("div", { staticClass: "card card-widget widget-user" }, [
-        _c(
-          "div",
-          {
-            staticClass: "widget-user-header text-white",
-            staticStyle: {
-              background: "url('./img/profile-back.jpg') center center",
-              "background-size": "cover"
-            }
-          },
-          [
-            _c("h3", { staticClass: "widget-user-username text-right" }, [
-              _vm._v("Elizabeth Pierce")
-            ]),
+    return _c("div", { staticClass: "card-footer" }, [
+      _c("div", { staticClass: "row" }, [
+        _c("div", { staticClass: "col-sm-4 border-right" }, [
+          _c("div", { staticClass: "description-block" }, [
+            _c("h5", { staticClass: "description-header" }, [_vm._v("3,200")]),
             _vm._v(" "),
-            _c("h5", { staticClass: "widget-user-desc text-right" }, [
-              _vm._v("Web Designer")
-            ])
-          ]
-        ),
-        _vm._v(" "),
-        _c("div", { staticClass: "widget-user-image" }, [
-          _c("img", {
-            staticClass: "img-circle",
-            attrs: { src: "", alt: "User Avatar" }
-          })
+            _c("span", { staticClass: "description-text" }, [_vm._v("SALES")])
+          ])
         ]),
         _vm._v(" "),
-        _c("div", { staticClass: "card-footer" }, [
-          _c("div", { staticClass: "row" }, [
-            _c("div", { staticClass: "col-sm-4 border-right" }, [
-              _c("div", { staticClass: "description-block" }, [
-                _c("h5", { staticClass: "description-header" }, [
-                  _vm._v("3,200")
-                ]),
-                _vm._v(" "),
-                _c("span", { staticClass: "description-text" }, [
-                  _vm._v("SALES")
-                ])
-              ])
-            ]),
+        _c("div", { staticClass: "col-sm-4 border-right" }, [
+          _c("div", { staticClass: "description-block" }, [
+            _c("h5", { staticClass: "description-header" }, [_vm._v("13,000")]),
             _vm._v(" "),
-            _c("div", { staticClass: "col-sm-4 border-right" }, [
-              _c("div", { staticClass: "description-block" }, [
-                _c("h5", { staticClass: "description-header" }, [
-                  _vm._v("13,000")
-                ]),
-                _vm._v(" "),
-                _c("span", { staticClass: "description-text" }, [
-                  _vm._v("FOLLOWERS")
-                ])
-              ])
-            ]),
+            _c("span", { staticClass: "description-text" }, [
+              _vm._v("FOLLOWERS")
+            ])
+          ])
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "col-sm-4" }, [
+          _c("div", { staticClass: "description-block" }, [
+            _c("h5", { staticClass: "description-header" }, [_vm._v("35")]),
             _vm._v(" "),
-            _c("div", { staticClass: "col-sm-4" }, [
-              _c("div", { staticClass: "description-block" }, [
-                _c("h5", { staticClass: "description-header" }, [_vm._v("35")]),
-                _vm._v(" "),
-                _c("span", { staticClass: "description-text" }, [
-                  _vm._v("PRODUCTS")
-                ])
-              ])
+            _c("span", { staticClass: "description-text" }, [
+              _vm._v("PRODUCTS")
             ])
           ])
         ])
@@ -65014,28 +67089,6 @@ var staticRenderFns = [
     return _c("div", { staticClass: "tab-pane", attrs: { id: "activity" } }, [
       _c("h2", [_vm._v("Display User Activity")])
     ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "form-group row" }, [
-      _c(
-        "label",
-        {
-          staticClass: "col-sm-2 col-form-label",
-          attrs: { for: "inputExperience" }
-        },
-        [_vm._v("Experience")]
-      ),
-      _vm._v(" "),
-      _c("div", { staticClass: "col-sm-10" }, [
-        _c("textarea", {
-          staticClass: "form-control",
-          attrs: { id: "inputExperience", placeholder: "Experience" }
-        })
-      ])
-    ])
   }
 ]
 render._withStripped = true
@@ -65060,82 +67113,101 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "container" }, [
-    _c("div", { staticClass: "row" }, [
-      _c("div", { staticClass: "col-12" }, [
-        _c("div", { staticClass: "card" }, [
-          _c("div", { staticClass: "card-header" }, [
-            _c("h3", { staticClass: "card-title" }, [_vm._v("User Table")]),
-            _vm._v(" "),
-            _c("div", { staticClass: "card-tools" }, [
-              _c(
-                "button",
-                { staticClass: "btn btn-success", on: { click: _vm.newModal } },
-                [
-                  _vm._v("Add New "),
-                  _c("i", { staticClass: "fas fa-user-plus" })
-                ]
-              )
-            ])
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "card-body table-responsive p-0" }, [
-            _c("table", { staticClass: "table table-hover text-nowrap" }, [
-              _vm._m(0),
+    _vm.$gate.isAdminOrAuthor()
+      ? _c("div", { staticClass: "row mt-5" }, [
+          _c("div", { staticClass: "col-12" }, [
+            _c("div", { staticClass: "card" }, [
+              _c("div", { staticClass: "card-header" }, [
+                _c("h3", { staticClass: "card-title" }, [_vm._v("User Table")]),
+                _vm._v(" "),
+                _c("div", { staticClass: "card-tools" }, [
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-success",
+                      on: { click: _vm.newModal }
+                    },
+                    [
+                      _vm._v("Add New "),
+                      _c("i", { staticClass: "fas fa-user-plus" })
+                    ]
+                  )
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "card-body table-responsive p-0" }, [
+                _c("table", { staticClass: "table table-hover text-nowrap" }, [
+                  _vm._m(0),
+                  _vm._v(" "),
+                  _c(
+                    "tbody",
+                    _vm._l(_vm.users.data, function(user) {
+                      return _c("tr", { key: user.id }, [
+                        _c("td", [_vm._v(_vm._s(user.id))]),
+                        _vm._v(" "),
+                        _c("td", [_vm._v(_vm._s(_vm._f("upText")(user.name)))]),
+                        _vm._v(" "),
+                        _c("td", [_vm._v(_vm._s(user.email))]),
+                        _vm._v(" "),
+                        _c("td", [_vm._v(_vm._s(_vm._f("upText")(user.type)))]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _c("span", { staticClass: "tag tag-success" }, [
+                            _vm._v(_vm._s(_vm._f("stdDate")(user.created_at)))
+                          ])
+                        ]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _c(
+                            "a",
+                            {
+                              attrs: { href: "#" },
+                              on: {
+                                click: function($event) {
+                                  return _vm.editModal(user)
+                                }
+                              }
+                            },
+                            [_c("i", { staticClass: "fas fa-edit blue" })]
+                          ),
+                          _vm._v("/\n                      "),
+                          _c(
+                            "a",
+                            {
+                              attrs: { href: "#" },
+                              on: {
+                                click: function($event) {
+                                  return _vm.deleteUser(user.id)
+                                }
+                              }
+                            },
+                            [_c("i", { staticClass: "fas fa-trash red" })]
+                          )
+                        ])
+                      ])
+                    }),
+                    0
+                  )
+                ])
+              ]),
               _vm._v(" "),
               _c(
-                "tbody",
-                _vm._l(_vm.users, function(user) {
-                  return _c("tr", { key: user.id }, [
-                    _c("td", [_vm._v(_vm._s(user.id))]),
-                    _vm._v(" "),
-                    _c("td", [_vm._v(_vm._s(_vm._f("upText")(user.name)))]),
-                    _vm._v(" "),
-                    _c("td", [_vm._v(_vm._s(user.email))]),
-                    _vm._v(" "),
-                    _c("td", [_vm._v("23 dafa f")]),
-                    _vm._v(" "),
-                    _c("td", [
-                      _c("span", { staticClass: "tag tag-success" }, [
-                        _vm._v(_vm._s(_vm._f("stdDate")(user.created_at)))
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("td", [
-                      _c(
-                        "a",
-                        {
-                          attrs: { href: "#" },
-                          on: {
-                            click: function($event) {
-                              return _vm.editModal(user)
-                            }
-                          }
-                        },
-                        [_c("i", { staticClass: "fas fa-edit blue" })]
-                      ),
-                      _vm._v("/\n                      "),
-                      _c(
-                        "a",
-                        {
-                          attrs: { href: "#" },
-                          on: {
-                            click: function($event) {
-                              return _vm.deleteUser(user.id)
-                            }
-                          }
-                        },
-                        [_c("i", { staticClass: "fas fa-trash red" })]
-                      )
-                    ])
-                  ])
-                }),
-                0
+                "div",
+                { staticClass: "card-footer" },
+                [
+                  _c("pagination", {
+                    attrs: { data: _vm.users },
+                    on: { "pagination-change-page": _vm.getResults }
+                  })
+                ],
+                1
               )
             ])
           ])
         ])
-      ])
-    ]),
+      : _vm._e(),
+    _vm._v(" "),
+    !_vm.$gate.isAdminOrAuthor() ? _c("div", [_c("not-found")], 1) : _vm._e(),
     _vm._v(" "),
     _c(
       "div",
@@ -65288,27 +67360,101 @@ var render = function() {
                       "div",
                       { staticClass: "form-group" },
                       [
-                        _c("input", {
-                          attrs: { type: "hidden", name: "date" }
-                        }),
-                        _vm._v(" "),
-                        _c("datepicker", {
-                          class: { "is-invalid": _vm.form.errors.has("date") },
+                        _c("textarea", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.form.bio,
+                              expression: "form.bio"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          class: { "is-invalid": _vm.form.errors.has("bio") },
                           attrs: {
-                            placeholder: "Select date",
-                            "bootstrap-styling": true
+                            name: "bio",
+                            id: "bio",
+                            placeholder: "Short bio for user (Optional)"
                           },
-                          model: {
-                            value: _vm.form.date,
-                            callback: function($$v) {
-                              _vm.$set(_vm.form, "date", $$v)
-                            },
-                            expression: "form.date"
+                          domProps: { value: _vm.form.bio },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.$set(_vm.form, "bio", $event.target.value)
+                            }
                           }
                         }),
                         _vm._v(" "),
                         _c("has-error", {
-                          attrs: { form: _vm.form, field: "date" }
+                          attrs: { form: _vm.form, field: "bio" }
+                        })
+                      ],
+                      1
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      { staticClass: "form-group" },
+                      [
+                        _c(
+                          "select",
+                          {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.form.type,
+                                expression: "form.type"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            class: {
+                              "is-invalid": _vm.form.errors.has("type")
+                            },
+                            attrs: { name: "type", id: "type" },
+                            on: {
+                              change: function($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function(o) {
+                                    return o.selected
+                                  })
+                                  .map(function(o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.$set(
+                                  _vm.form,
+                                  "type",
+                                  $event.target.multiple
+                                    ? $$selectedVal
+                                    : $$selectedVal[0]
+                                )
+                              }
+                            }
+                          },
+                          [
+                            _c("option", { attrs: { value: "" } }, [
+                              _vm._v("Select User Role")
+                            ]),
+                            _vm._v(" "),
+                            _c("option", { attrs: { value: "admin" } }, [
+                              _vm._v("Admin")
+                            ]),
+                            _vm._v(" "),
+                            _c("option", { attrs: { value: "user" } }, [
+                              _vm._v("Standard User")
+                            ]),
+                            _vm._v(" "),
+                            _c("option", { attrs: { value: "author" } }, [
+                              _vm._v("Author")
+                            ])
+                          ]
+                        ),
+                        _vm._v(" "),
+                        _c("has-error", {
+                          attrs: { form: _vm.form, field: "type" }
                         })
                       ],
                       1
@@ -65425,7 +67571,7 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v("Email")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Date")]),
+        _c("th", [_vm._v("Type")]),
         _vm._v(" "),
         _c("th", [_vm._v("Created at")]),
         _vm._v(" "),
@@ -84244,6 +86390,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue_progressbar__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(vue_progressbar__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _components_Gate__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/Gate */ "./resources/js/components/Gate.js");
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
@@ -84252,8 +86399,12 @@ window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.
 
 
 
-var routes = [// { path: '/dashboard', component: require('./components/Dashboard.vue').default },
-{
+
+Vue.prototype.$gate = new _components_Gate__WEBPACK_IMPORTED_MODULE_5__["default"](window.user);
+var routes = [{
+  path: '/dashboard',
+  component: __webpack_require__(/*! ./components/Dashboard.vue */ "./resources/js/components/Dashboard.vue")["default"]
+}, {
   path: '/user',
   component: __webpack_require__(/*! ./components/Users.vue */ "./resources/js/components/Users.vue")["default"]
 }, {
@@ -84262,6 +86413,9 @@ var routes = [// { path: '/dashboard', component: require('./components/Dashboar
 }, {
   path: '/profile',
   component: __webpack_require__(/*! ./components/Profile.vue */ "./resources/js/components/Profile.vue")["default"]
+}, {
+  path: '/*',
+  component: __webpack_require__(/*! ./components/NotFound.vue */ "./resources/js/components/NotFound.vue")["default"]
 }];
 var router = new vue_router__WEBPACK_IMPORTED_MODULE_0__["default"]({
   mode: 'history',
@@ -84270,6 +86424,7 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_0__["default"]({
 });
 Vue.component(vform__WEBPACK_IMPORTED_MODULE_1__["HasError"].name, vform__WEBPACK_IMPORTED_MODULE_1__["HasError"]);
 Vue.component(vform__WEBPACK_IMPORTED_MODULE_1__["AlertError"].name, vform__WEBPACK_IMPORTED_MODULE_1__["AlertError"]);
+Vue.component('pagination', __webpack_require__(/*! laravel-vue-pagination */ "./node_modules/laravel-vue-pagination/dist/laravel-vue-pagination.common.js"));
 window.Form = vform__WEBPACK_IMPORTED_MODULE_1__["Form"];
 Vue.use(vue_router__WEBPACK_IMPORTED_MODULE_0__["default"]); // sweetalert2
 
@@ -84305,9 +86460,18 @@ Vue.component('display-users', __webpack_require__(/*! ./components/Users.vue */
 Vue.component('passport-clients', __webpack_require__(/*! ./components/passport/Clients.vue */ "./resources/js/components/passport/Clients.vue")["default"]);
 Vue.component('passport-authorized-clients', __webpack_require__(/*! ./components/passport/AuthorizedClients.vue */ "./resources/js/components/passport/AuthorizedClients.vue")["default"]);
 Vue.component('passport-personal-access-tokens', __webpack_require__(/*! ./components/passport/PersonalAccessTokens.vue */ "./resources/js/components/passport/PersonalAccessTokens.vue")["default"]);
+Vue.component('not-found', __webpack_require__(/*! ./components/NotFound.vue */ "./resources/js/components/NotFound.vue")["default"]);
 var app = new Vue({
   el: '#app',
-  router: router
+  router: router,
+  data: {
+    search: ''
+  },
+  methods: {
+    searchit: _.debounce(function () {
+      Fire.$emit('searching');
+    }, 1000)
+  }
 });
 
 /***/ }),
@@ -84356,6 +86520,75 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 //     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
 //     encrypted: true
 // });
+
+/***/ }),
+
+/***/ "./resources/js/components/Dashboard.vue":
+/*!***********************************************!*\
+  !*** ./resources/js/components/Dashboard.vue ***!
+  \***********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Dashboard_vue_vue_type_template_id_040e2ab9___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Dashboard.vue?vue&type=template&id=040e2ab9& */ "./resources/js/components/Dashboard.vue?vue&type=template&id=040e2ab9&");
+/* harmony import */ var _Dashboard_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Dashboard.vue?vue&type=script&lang=js& */ "./resources/js/components/Dashboard.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _Dashboard_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _Dashboard_vue_vue_type_template_id_040e2ab9___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _Dashboard_vue_vue_type_template_id_040e2ab9___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/Dashboard.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/Dashboard.vue?vue&type=script&lang=js&":
+/*!************************************************************************!*\
+  !*** ./resources/js/components/Dashboard.vue?vue&type=script&lang=js& ***!
+  \************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Dashboard_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./Dashboard.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Dashboard.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Dashboard_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/Dashboard.vue?vue&type=template&id=040e2ab9&":
+/*!******************************************************************************!*\
+  !*** ./resources/js/components/Dashboard.vue?vue&type=template&id=040e2ab9& ***!
+  \******************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Dashboard_vue_vue_type_template_id_040e2ab9___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./Dashboard.vue?vue&type=template&id=040e2ab9& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Dashboard.vue?vue&type=template&id=040e2ab9&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Dashboard_vue_vue_type_template_id_040e2ab9___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Dashboard_vue_vue_type_template_id_040e2ab9___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
 
 /***/ }),
 
@@ -84492,6 +86725,129 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ExampleComponent_vue_vue_type_template_id_299e239e___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ExampleComponent_vue_vue_type_template_id_299e239e___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/Gate.js":
+/*!*****************************************!*\
+  !*** ./resources/js/components/Gate.js ***!
+  \*****************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Gate; });
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var Gate = /*#__PURE__*/function () {
+  function Gate(user) {
+    _classCallCheck(this, Gate);
+
+    this.user = user;
+  }
+
+  _createClass(Gate, [{
+    key: "isAdmin",
+    value: function isAdmin() {
+      return this.user.type === 'admin';
+    }
+  }, {
+    key: "isAuthor",
+    value: function isAuthor() {
+      return this.user.type === 'author';
+    }
+  }, {
+    key: "isUser",
+    value: function isUser() {
+      return this.user.type === 'user';
+    }
+  }, {
+    key: "isAdminOrAuthor",
+    value: function isAdminOrAuthor() {
+      if (this.user.type === 'admin' || this.user.type === 'author') {
+        return true;
+      }
+    }
+  }]);
+
+  return Gate;
+}();
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/NotFound.vue":
+/*!**********************************************!*\
+  !*** ./resources/js/components/NotFound.vue ***!
+  \**********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _NotFound_vue_vue_type_template_id_2ce50e5a___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./NotFound.vue?vue&type=template&id=2ce50e5a& */ "./resources/js/components/NotFound.vue?vue&type=template&id=2ce50e5a&");
+/* harmony import */ var _NotFound_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./NotFound.vue?vue&type=script&lang=js& */ "./resources/js/components/NotFound.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _NotFound_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _NotFound_vue_vue_type_template_id_2ce50e5a___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _NotFound_vue_vue_type_template_id_2ce50e5a___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/NotFound.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/NotFound.vue?vue&type=script&lang=js&":
+/*!***********************************************************************!*\
+  !*** ./resources/js/components/NotFound.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_NotFound_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./NotFound.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/NotFound.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_NotFound_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/NotFound.vue?vue&type=template&id=2ce50e5a&":
+/*!*****************************************************************************!*\
+  !*** ./resources/js/components/NotFound.vue?vue&type=template&id=2ce50e5a& ***!
+  \*****************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_NotFound_vue_vue_type_template_id_2ce50e5a___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./NotFound.vue?vue&type=template&id=2ce50e5a& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/NotFound.vue?vue&type=template&id=2ce50e5a&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_NotFound_vue_vue_type_template_id_2ce50e5a___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_NotFound_vue_vue_type_template_id_2ce50e5a___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 
