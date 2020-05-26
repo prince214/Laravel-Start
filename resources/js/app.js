@@ -11,6 +11,7 @@ import Gate from './components/Gate';
 Vue.prototype.$gate = new Gate(window.user);
 
 let routes = [
+  { path: '/home', component: require('./components/Dashboard.vue').default },
   { path: '/dashboard', component: require('./components/Dashboard.vue').default },
   { path: '/user', component: require('./components/Users.vue').default },
   { path: '/developer', component: require('./components/Developer.vue').default },
